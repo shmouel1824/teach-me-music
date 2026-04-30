@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Connexion — Teach Me Music</title>
+<title>Login — Teach Me Music</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -11,7 +11,7 @@
   --bg:#0b0907; --surface:#151008; --surface2:#1d1610;
   --border:rgba(210,175,100,0.18); --gold:#d4aa50; --gold2:#f0cc78;
   --ivory:#f5f0e2; --ivory-dim:#c8c0a8; --green:#3ddc84; --red:#ff5a5a;
-  --muted:#6b5e48; --r:16px;
+  --muted:#b09e80; --r:16px;
 }
 body {
   font-family:'Outfit',sans-serif; background:var(--bg); color:var(--ivory);
@@ -19,46 +19,23 @@ body {
   background-image:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(80,50,10,0.4) 0%,transparent 70%);
   padding:2rem 1rem;
 }
-.card {
-  width:100%; max-width:680px;
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r); padding:2.5rem 2rem;
-  box-shadow:0 24px 80px rgba(0,0,0,0.7);
-}
+.card { width:100%; max-width:680px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:2.5rem 2rem; box-shadow:0 24px 80px rgba(0,0,0,0.7); }
 .logo { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:var(--gold); text-align:center; margin-bottom:0.2rem; letter-spacing:0.04em; }
 .logo span { font-style:italic; color:var(--gold2); }
 .subtitle { text-align:center; font-size:0.8rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:2rem; }
-
 h2 { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:var(--ivory); text-align:center; margin-bottom:0.4rem; }
-.desc { text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:1.8rem; line-height:1.6; }
+.desc { text-align:center; font-size:0.88rem; color:var(--muted); margin-bottom:1.8rem; line-height:1.6; }
 .desc strong { color:var(--gold2); }
-
 .field { margin-bottom:1.5rem; }
-.field label { display:block; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5rem; }
-.field input {
-  width:100%; background:var(--surface2); border:1.5px solid var(--border);
-  border-radius:10px; padding:0.75rem 1rem; color:var(--ivory);
-  font-family:'Outfit',sans-serif; font-size:1rem; outline:none;
-  transition:border-color 0.2s;
-}
+.field label { display:block; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ivory-dim); margin-bottom:0.5rem; font-weight:500; }
+.field input { width:100%; background:var(--surface2); border:1.5px solid var(--border); border-radius:10px; padding:0.75rem 1rem; color:var(--ivory); font-family:'Outfit',sans-serif; font-size:1rem; outline:none; transition:border-color 0.2s; }
 .field input:focus { border-color:var(--gold); }
-.field input::placeholder { color:var(--muted); }
-
-/* Note dots — hidden display for security */
+.field input::placeholder { color:var(--muted); opacity:0.6; }
 .notes-display { display:flex; gap:0.5rem; justify-content:center; margin-bottom:1.2rem; min-height:52px; align-items:center; }
-.note-bubble {
-  width:48px; height:48px; border-radius:50%;
-  border:2px solid var(--border); background:var(--surface2);
-  display:flex; align-items:center; justify-content:center;
-  font-size:1.3rem; color:var(--muted);
-  transition:all 0.25s;
-}
+.note-bubble { width:48px; height:48px; border-radius:50%; border:2px solid var(--border); background:var(--surface2); display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:var(--muted); transition:all 0.25s; }
 .note-bubble.filled { border-color:var(--gold); background:rgba(212,170,80,0.12); color:var(--gold); }
-
-.notes-label { font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); text-align:center; margin-bottom:0.8rem; }
+.notes-label { font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--ivory-dim); text-align:center; margin-bottom:0.8rem; font-weight:500; }
 .notes-label span { color:var(--gold2); font-weight:700; }
-
-/* Piano */
 .piano-wrap { display:flex; flex-direction:column; align-items:center; margin-bottom:1.5rem; }
 .piano { position:relative; display:flex; user-select:none; filter:drop-shadow(0 8px 24px rgba(0,0,0,0.6)); }
 .key-w { position:relative; background:linear-gradient(180deg,#f6f1e3 0%,#e9e0cc 85%,#d8cebc 100%); border:1px solid #b0a080; border-bottom:4px solid #9a8a68; border-radius:0 0 7px 7px; cursor:pointer; flex-shrink:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding-bottom:6px; z-index:1; transition:background 0.07s,transform 0.07s; }
@@ -70,7 +47,6 @@ h2 { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; 
 .key-b:hover { background:linear-gradient(180deg,#302010 0%,#181008 100%); }
 .key-b:active,.key-b.pressed { transform:translateY(2px); }
 .key-b.flash { background:linear-gradient(180deg,#6b5500 0%,#3d3000 100%) !important; border-color:var(--gold) !important; box-shadow:0 0 12px rgba(212,170,50,0.5) !important; }
-
 .actions { display:flex; gap:0.75rem; flex-wrap:wrap; }
 .btn { flex:1; min-width:120px; padding:0.85rem 1rem; border-radius:10px; font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:600; cursor:pointer; border:none; transition:all 0.2s; text-align:center; }
 .btn-primary { background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#1a1208; }
@@ -78,12 +54,10 @@ h2 { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; 
 .btn-primary:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
 .btn-ghost { background:var(--surface2); border:1.5px solid var(--border); color:var(--ivory-dim); }
 .btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
-
-.error-msg { background:rgba(255,90,90,0.1); border:1px solid rgba(255,90,90,0.3); border-radius:8px; padding:0.7rem 1rem; font-size:0.85rem; color:var(--red); margin-bottom:1rem; display:none; }
+.error-msg { background:rgba(255,90,90,0.1); border:1px solid rgba(255,90,90,0.3); border-radius:8px; padding:0.7rem 1rem; font-size:0.88rem; color:var(--red); margin-bottom:1rem; display:none; }
 .error-msg.show { display:block; animation:shake 0.4s ease; }
 @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
-
-.register-link { text-align:center; margin-top:1.5rem; font-size:0.82rem; color:var(--muted); }
+.register-link { text-align:center; margin-top:1.5rem; font-size:0.85rem; color:var(--muted); }
 .register-link a { color:var(--gold); text-decoration:none; font-weight:600; }
 .register-link a:hover { color:var(--gold2); }
 </style>
@@ -91,19 +65,19 @@ h2 { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; 
 <body>
 <div class="card">
   <div class="logo">𝄞 Teach Me <span>Music</span></div>
-  <div class="subtitle">Connexion</div>
+  <div class="subtitle">Login</div>
 
-  <h2>Bon retour !</h2>
-  <p class="desc">Entrez votre nom puis jouez votre <strong>mélodie secrète</strong> de 5 notes.</p>
+  <h2>Welcome back!</h2>
+  <p class="desc">Enter your username then play your <strong>secret melody</strong> of 5 notes.</p>
 
   <div class="error-msg" id="error-msg"></div>
 
   <div class="field">
-    <label>Nom d'utilisateur</label>
-    <input type="text" id="username" placeholder="Votre nom d'utilisateur" autocomplete="off">
+    <label>Username</label>
+    <input type="text" id="username" placeholder="Your username" autocomplete="off">
   </div>
 
-  <div class="notes-label">Mélodie secrète : <span id="notes-count">0</span> / 5</div>
+  <div class="notes-label">Secret melody: <span id="notes-count">0</span> / 5</div>
   <div class="notes-display" id="notes-display">
     <div class="note-bubble" id="b0">♩</div>
     <div class="note-bubble" id="b1">♩</div>
@@ -117,11 +91,11 @@ h2 { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; 
   </div>
 
   <div class="actions">
-    <button class="btn btn-ghost" onclick="resetNotes()">↺ Effacer</button>
-    <button class="btn btn-primary" id="btn-login" onclick="submitLogin()" disabled>Se connecter 🎵</button>
+    <button class="btn btn-ghost" onclick="resetNotes()">↺ Clear</button>
+    <button class="btn btn-primary" id="btn-login" onclick="submitLogin()" disabled>Log in 🎵</button>
   </div>
 
-  <div class="register-link">Pas encore de compte ? <a href="{% url 'accounts:register' %}">S'inscrire</a></div>
+  <div class="register-link">No account yet? <a href="{% url 'accounts:register' %}">Register</a></div>
 </div>
 
 <script>
@@ -145,53 +119,55 @@ function getCtx() {
   if(audioCtx.state==='suspended') audioCtx.resume();
   return audioCtx;
 }
+
 function playNote(freq) {
-  const ctx=getCtx();
-  const g=ctx.createGain();
-  g.gain.setValueAtTime(0,ctx.currentTime);
-  g.gain.linearRampToValueAtTime(0.5,ctx.currentTime+0.01);
-  g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2);
+  const ctx = getCtx();
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0, ctx.currentTime);
+  g.gain.linearRampToValueAtTime(0.5, ctx.currentTime+0.01);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+1.2);
   g.connect(ctx.destination);
-  [[1,1],[2,.45],[3,.25],[4,.12]].forEach(([h,v])=>{
-    const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=freq*h;
-    const gn=ctx.createGain(); gn.gain.value=v;
-    o.connect(gn); gn.connect(g); o.start(ctx.currentTime); o.stop(ctx.currentTime+1.2);
+  [[1,1],[2,.45],[3,.25],[4,.12]].forEach(([h,v]) => {
+    const o = ctx.createOscillator(); o.type='sine'; o.frequency.value=freq*h;
+    const gn = ctx.createGain(); gn.gain.value=v;
+    o.connect(gn); gn.connect(g);
+    o.start(ctx.currentTime); o.stop(ctx.currentTime+1.2);
   });
 }
 
 function buildPiano() {
   const el = document.getElementById('piano');
   const W = Math.min(el.parentElement.offsetWidth - 40, 580);
-  const whites = NOTES_DATA.filter(n=>n.white);
+  const whites = NOTES_DATA.filter(n => n.white);
   const WK = Math.floor(W / whites.length);
   const HW = Math.round(WK * 5.5);
   const WB = Math.round(WK * 0.6);
   const HB = Math.round(HW * 0.6);
-  el.style.width = (whites.length * WK) + 'px';
+  el.style.width  = (whites.length * WK) + 'px';
   el.style.height = HW + 'px';
 
   whites.forEach(note => {
     const k = document.createElement('div');
-    k.className='key-w'; k.dataset.note=note.fr;
-    k.style.width=WK+'px'; k.style.height=HW+'px';
-    const lbl=document.createElement('span');
-    lbl.className='key-label';
-    lbl.innerHTML=note.fr.replace(/(\d+)$/,'<br>$1');
+    k.className = 'key-w'; k.dataset.note = note.fr;
+    k.style.width = WK+'px'; k.style.height = HW+'px';
+    const lbl = document.createElement('span');
+    lbl.className = 'key-label';
+    lbl.innerHTML = note.fr.replace(/(\d+)$/, '<br>$1');
     k.appendChild(lbl);
-    k.addEventListener('mousedown',e=>{e.preventDefault();onKey(note,k);});
-    k.addEventListener('touchstart',e=>{e.preventDefault();onKey(note,k);},{passive:false});
+    k.addEventListener('mousedown', e => { e.preventDefault(); onKey(note, k); });
+    k.addEventListener('touchstart', e => { e.preventDefault(); onKey(note, k); }, {passive:false});
     el.appendChild(k);
   });
 
-  let wi=-1;
-  NOTES_DATA.forEach(note=>{
-    if(note.white){wi++;return;}
-    const k=document.createElement('div');
-    k.className='key-b'; k.dataset.note=note.fr;
-    k.style.width=WB+'px'; k.style.height=HB+'px';
-    k.style.left=(wi*WK+WK-WB/2)+'px';
-    k.addEventListener('mousedown',e=>{e.preventDefault();onKey(note,k);});
-    k.addEventListener('touchstart',e=>{e.preventDefault();onKey(note,k);},{passive:false});
+  let wi = -1;
+  NOTES_DATA.forEach(note => {
+    if(note.white) { wi++; return; }
+    const k = document.createElement('div');
+    k.className = 'key-b'; k.dataset.note = note.fr;
+    k.style.width = WB+'px'; k.style.height = HB+'px';
+    k.style.left  = (wi*WK + WK - WB/2) + 'px';
+    k.addEventListener('mousedown', e => { e.preventDefault(); onKey(note, k); });
+    k.addEventListener('touchstart', e => { e.preventDefault(); onKey(note, k); }, {passive:false});
     el.appendChild(k);
   });
 }
@@ -200,12 +176,11 @@ function onKey(note, keyEl) {
   if(playedNotes.length >= 5) return;
   playNote(note.freq);
   keyEl.classList.add('flash');
-  setTimeout(()=>keyEl.classList.remove('flash'), 500);
+  setTimeout(() => keyEl.classList.remove('flash'), 500);
   playedNotes.push(note.fr);
   updateBubbles();
-  if(playedNotes.length === 5) {
+  if(playedNotes.length === 5)
     document.getElementById('btn-login').disabled = false;
-  }
 }
 
 function resetNotes() {
@@ -216,54 +191,56 @@ function resetNotes() {
 }
 
 function updateBubbles() {
-  for(let i=0;i<5;i++) {
-    const b=document.getElementById('b'+i);
+  for(let i = 0; i < 5; i++) {
+    const b = document.getElementById('b'+i);
     if(playedNotes[i]) {
-      b.textContent='●';  // hidden — just a dot, not the note name
+      b.textContent = '●';
       b.classList.add('filled');
     } else {
-      b.textContent='♩'; b.className='note-bubble';
+      b.textContent = '♩';
+      b.className = 'note-bubble';
     }
   }
-  document.getElementById('notes-count').textContent=playedNotes.length;
+  document.getElementById('notes-count').textContent = playedNotes.length;
 }
 
 async function submitLogin() {
   const username = document.getElementById('username').value.trim();
-  if(!username) { showError('Entrez votre nom d\'utilisateur.'); return; }
+  if(!username) { showError('Please enter your username.'); return; }
   const btn = document.getElementById('btn-login');
-  btn.disabled=true; btn.textContent='Vérification…';
+  btn.disabled = true; btn.textContent = 'Verifying…';
   try {
     const res = await fetch('{% url "accounts:login" %}', {
-      method:'POST',
-      headers:{'Content-Type':'application/json','X-CSRFToken':'{{ csrf_token }}'},
-      body:JSON.stringify({username, notes: playedNotes})
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'X-CSRFToken':'{{ csrf_token }}'},
+      body: JSON.stringify({username, notes: playedNotes})
     });
     const data = await res.json();
     if(data.ok) {
-      btn.textContent='✅ Connexion…';
-      setTimeout(()=>window.location.href=data.redirect, 600);
+      btn.textContent = '✅ Logging in…';
+      setTimeout(() => window.location.href = data.redirect, 600);
     } else {
-      showError(data.error);
+      showError(data.error || 'Incorrect username or melody.');
       resetNotes();
-      btn.disabled=false; btn.textContent='Se connecter 🎵';
+      btn.disabled = false; btn.textContent = 'Log in 🎵';
     }
   } catch(e) {
-    showError('Erreur réseau.');
-    btn.disabled=false; btn.textContent='Se connecter 🎵';
+    showError('Network error. Please try again.');
+    btn.disabled = false; btn.textContent = 'Log in 🎵';
   }
 }
 
 function showError(msg) {
-  const el=document.getElementById('error-msg');
-  el.textContent=msg; el.classList.remove('show');
-  void el.offsetWidth; // reflow for animation replay
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.classList.remove('show');
+  void el.offsetWidth;
   el.classList.add('show');
 }
 function hideError() { document.getElementById('error-msg').classList.remove('show'); }
 
-document.getElementById('username').addEventListener('keydown', e=>{
-  if(e.key==='Enter') document.getElementById('piano').querySelector('.key-w').focus();
+document.getElementById('username').addEventListener('keydown', e => {
+  if(e.key === 'Enter') document.getElementById('piano').querySelector('.key-w').focus();
 });
 
 document.addEventListener('DOMContentLoaded', buildPiano);
