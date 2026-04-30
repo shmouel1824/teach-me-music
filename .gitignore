@@ -16,9 +16,7 @@ db.sqlite3
 staticfiles/
 media/
 
-# ML models (too large for GitHub)
-recognition/ml_models/*.keras
-recognition/ml_models/*.pkl
+
 
 # OS
 .DS_Store
