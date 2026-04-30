@@ -1,8 +1,30 @@
-.env
+@"
+# Virtual environment
+project_venv/
+venv/
+env/
+.venv/
+
+# Python cache
 __pycache__/
 *.pyc
+*.pyo
+
+# Django
 db.sqlite3
-ml_models/
-*.keras
-*.pkl
-venv/
+*.log
+staticfiles/
+media/
+
+# ML models (too large for GitHub)
+recognition/ml_models/*.keras
+recognition/ml_models/*.pkl
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.env
+"@ | Out-File -FilePath .gitignore -Encoding utf8

@@ -1,0 +1,568 @@
+/*
+ * Teach Me Music — Jazzmin Admin Custom CSS
+ * Palette: deep navy + warm gold, matching the main app exactly
+ * File location: static/admin/css/jazzmin_custom.css
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ── CSS variables matching the app ── */
+:root {
+  --tm-navy:       #0f1b2d;
+  --tm-navy-mid:   #1a2f4a;
+  --tm-navy-soft:  #243550;
+  --tm-gold:       #d4aa50;
+  --tm-gold-light: #f0cc78;
+  --tm-gold-dim:   #8a6830;
+  --tm-cream:      #f5f0e8;
+  --tm-muted:      #b09e80;
+  --tm-green:      #3ddc84;
+  --tm-red:        #ff5a5a;
+}
+
+/* ══════════════════════════════════════════════════════════
+   BODY & BASE
+══════════════════════════════════════════════════════════ */
+body,
+.wrapper,
+.main-sidebar,
+.main-header,
+.content-wrapper,
+.main-footer {
+  font-family: 'DM Sans', sans-serif !important;
+}
+
+body {
+  background: var(--tm-navy) !important;
+  color: var(--tm-cream) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   TOP NAVBAR
+══════════════════════════════════════════════════════════ */
+.main-header.navbar {
+  background: rgba(15, 27, 45, 0.96) !important;
+  border-bottom: 1px solid rgba(212, 170, 80, 0.25) !important;
+  backdrop-filter: blur(12px);
+}
+
+.main-header .navbar-brand {
+  font-family: 'Playfair Display', serif !important;
+  font-size: 1.3rem !important;
+  font-style: italic;
+  color: var(--tm-gold) !important;
+  letter-spacing: 0.04em;
+}
+
+.main-header .nav-link,
+.main-header .navbar-nav .nav-link {
+  color: var(--tm-muted) !important;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: color 0.2s;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+}
+.main-header .nav-link:hover,
+.main-header .navbar-nav .nav-link:hover {
+  color: var(--tm-gold) !important;
+  background: rgba(212, 170, 80, 0.1) !important;
+}
+
+/* Search bar */
+.main-header .form-control-navbar {
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(212,170,80,0.2) !important;
+  color: var(--tm-cream) !important;
+  border-radius: 8px 0 0 8px !important;
+}
+.main-header .form-control-navbar:focus {
+  border-color: var(--tm-gold) !important;
+}
+.main-header .btn-navbar {
+  background: rgba(212,170,80,0.15) !important;
+  border-color: rgba(212,170,80,0.3) !important;
+  color: var(--tm-gold) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════════════════ */
+.main-sidebar {
+  background: var(--tm-navy-mid) !important;
+  border-right: 1px solid rgba(212,170,80,0.15) !important;
+}
+
+/* Brand / logo area */
+.brand-link {
+  background: var(--tm-navy) !important;
+  border-bottom: 1px solid rgba(212,170,80,0.2) !important;
+  padding: 1rem 1.25rem !important;
+}
+.brand-link .brand-text {
+  font-family: 'Playfair Display', serif !important;
+  font-style: italic;
+  color: var(--tm-gold) !important;
+  font-size: 1.15rem !important;
+  letter-spacing: 0.04em;
+}
+
+/* Nav items */
+.nav-sidebar .nav-item > .nav-link {
+  color: var(--tm-muted) !important;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 8px;
+  margin: 2px 8px;
+  transition: all 0.2s;
+}
+.nav-sidebar .nav-item > .nav-link:hover {
+  background: rgba(212,170,80,0.1) !important;
+  color: var(--tm-gold) !important;
+}
+.nav-sidebar .nav-item > .nav-link.active {
+  background: rgba(212,170,80,0.15) !important;
+  color: var(--tm-gold-light) !important;
+  font-weight: 600;
+  border-left: 3px solid var(--tm-gold);
+}
+
+/* Nav section headers */
+.nav-sidebar .nav-header {
+  font-size: 0.65rem !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  color: rgba(212,170,80,0.5) !important;
+  padding: 0.75rem 1rem 0.3rem !important;
+  margin-top: 0.5rem;
+}
+
+/* Icons */
+.nav-sidebar .nav-icon {
+  color: var(--tm-gold-dim) !important;
+  margin-right: 0.5rem;
+  transition: color 0.2s;
+}
+.nav-sidebar .nav-item > .nav-link:hover .nav-icon,
+.nav-sidebar .nav-item > .nav-link.active .nav-icon {
+  color: var(--tm-gold) !important;
+}
+
+/* User panel at top of sidebar */
+.user-panel {
+  border-bottom: 1px solid rgba(212,170,80,0.15) !important;
+  padding: 0.75rem 1rem;
+}
+.user-panel .info a {
+  color: var(--tm-cream) !important;
+  font-weight: 600;
+}
+.user-panel .info a:hover {
+  color: var(--tm-gold) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CONTENT AREA
+══════════════════════════════════════════════════════════ */
+.content-wrapper {
+  background: var(--tm-navy) !important;
+}
+
+/* Breadcrumb */
+.content-header {
+  border-bottom: 1px solid rgba(212,170,80,0.12);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+.content-header h1 {
+  font-family: 'Playfair Display', serif !important;
+  font-size: 1.6rem !important;
+  color: var(--tm-gold) !important;
+  font-weight: 700;
+}
+.breadcrumb-item,
+.breadcrumb-item a,
+.breadcrumb-item.active {
+  color: var(--tm-muted) !important;
+  font-size: 0.82rem;
+}
+.breadcrumb-item a:hover { color: var(--tm-gold) !important; }
+
+/* ══════════════════════════════════════════════════════════
+   CARDS / BOXES
+══════════════════════════════════════════════════════════ */
+.card,
+.box {
+  background: var(--tm-navy-mid) !important;
+  border: 1px solid rgba(212,170,80,0.15) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35) !important;
+}
+
+.card-header,
+.box-header {
+  background: rgba(212,170,80,0.06) !important;
+  border-bottom: 1px solid rgba(212,170,80,0.15) !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+.card-title,
+.box-title {
+  font-family: 'Playfair Display', serif !important;
+  color: var(--tm-gold) !important;
+  font-size: 1.1rem !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   TABLES
+══════════════════════════════════════════════════════════ */
+#result_list,
+.table {
+  color: var(--tm-cream) !important;
+  border-color: rgba(212,170,80,0.12) !important;
+}
+
+#result_list thead th,
+.table thead th {
+  background: rgba(212,170,80,0.08) !important;
+  border-bottom: 2px solid rgba(212,170,80,0.25) !important;
+  color: var(--tm-gold) !important;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 0.85rem 1rem;
+}
+
+#result_list tbody tr,
+.table tbody tr {
+  border-bottom: 1px solid rgba(212,170,80,0.08) !important;
+  transition: background 0.15s;
+}
+#result_list tbody tr:hover,
+.table tbody tr:hover {
+  background: rgba(212,170,80,0.06) !important;
+}
+
+#result_list tbody td,
+.table tbody td {
+  color: var(--tm-cream) !important;
+  border-color: rgba(212,170,80,0.08) !important;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+}
+
+/* Row selected checkbox */
+#result_list tbody tr.selected,
+#result_list tbody tr.selected td {
+  background: rgba(212,170,80,0.12) !important;
+}
+
+/* Column sort arrows */
+#result_list th a,
+#result_list th a:link,
+#result_list th a:visited {
+  color: var(--tm-gold) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   FORMS
+══════════════════════════════════════════════════════════ */
+.form-control,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(212,170,80,0.2) !important;
+  color: var(--tm-cream) !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.85rem;
+  transition: border-color 0.2s;
+}
+.form-control:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--tm-gold) !important;
+  background: rgba(255,255,255,0.08) !important;
+  box-shadow: 0 0 0 3px rgba(212,170,80,0.15) !important;
+  outline: none;
+}
+
+label {
+  color: var(--tm-muted) !important;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+/* Fieldsets */
+fieldset {
+  border: 1px solid rgba(212,170,80,0.15) !important;
+  border-radius: 10px !important;
+  padding: 1rem 1.5rem !important;
+  margin-bottom: 1rem;
+}
+fieldset h2 {
+  font-family: 'Playfair Display', serif !important;
+  color: var(--tm-gold) !important;
+  font-size: 1rem !important;
+  border-bottom: 1px solid rgba(212,170,80,0.15) !important;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ══════════════════════════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════════════════════════ */
+.btn-primary,
+input[type="submit"],
+.submit-row input[type="submit"] {
+  background: var(--tm-gold) !important;
+  border-color: var(--tm-gold) !important;
+  color: #0f1b2d !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  padding: 0.55rem 1.4rem !important;
+  transition: all 0.2s !important;
+}
+.btn-primary:hover,
+input[type="submit"]:hover {
+  background: var(--tm-gold-light) !important;
+  border-color: var(--tm-gold-light) !important;
+  transform: translateY(-1px);
+}
+
+.btn-secondary,
+.btn-default {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(212,170,80,0.25) !important;
+  color: var(--tm-muted) !important;
+  border-radius: 8px !important;
+}
+.btn-secondary:hover,
+.btn-default:hover {
+  border-color: var(--tm-gold) !important;
+  color: var(--tm-gold) !important;
+}
+
+.btn-danger,
+.deletelink {
+  background: rgba(255,90,90,0.15) !important;
+  border-color: rgba(255,90,90,0.4) !important;
+  color: var(--tm-red) !important;
+  border-radius: 8px !important;
+}
+.btn-danger:hover,
+.deletelink:hover {
+  background: rgba(255,90,90,0.25) !important;
+}
+
+/* Add button (green) */
+.btn-success,
+.addlink {
+  background: rgba(61,220,132,0.15) !important;
+  border-color: rgba(61,220,132,0.4) !important;
+  color: var(--tm-green) !important;
+  border-radius: 8px !important;
+}
+.btn-success:hover,
+.addlink:hover {
+  background: rgba(61,220,132,0.25) !important;
+}
+
+/* Submit row */
+.submit-row {
+  background: rgba(212,170,80,0.05) !important;
+  border-top: 1px solid rgba(212,170,80,0.15) !important;
+  border-radius: 0 0 12px 12px !important;
+  padding: 1rem 1.5rem !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGINATION
+══════════════════════════════════════════════════════════ */
+.pagination .page-item .page-link {
+  background: var(--tm-navy-mid) !important;
+  border-color: rgba(212,170,80,0.2) !important;
+  color: var(--tm-muted) !important;
+  border-radius: 6px !important;
+  margin: 0 2px;
+}
+.pagination .page-item.active .page-link {
+  background: rgba(212,170,80,0.2) !important;
+  border-color: var(--tm-gold) !important;
+  color: var(--tm-gold) !important;
+}
+.pagination .page-item .page-link:hover {
+  background: rgba(212,170,80,0.1) !important;
+  color: var(--tm-gold) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   FILTERS (right sidebar)
+══════════════════════════════════════════════════════════ */
+#changelist-filter {
+  background: var(--tm-navy-mid) !important;
+  border: 1px solid rgba(212,170,80,0.15) !important;
+  border-radius: 12px !important;
+  padding: 1rem !important;
+}
+#changelist-filter h2 {
+  font-family: 'Playfair Display', serif !important;
+  color: var(--tm-gold) !important;
+  font-size: 0.9rem !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(212,170,80,0.15) !important;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+#changelist-filter h3 {
+  color: var(--tm-muted) !important;
+  font-size: 0.8rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 0.75rem;
+}
+#changelist-filter ul li a {
+  color: var(--tm-muted) !important;
+  font-size: 0.88rem;
+  transition: color 0.15s;
+}
+#changelist-filter ul li a:hover,
+#changelist-filter ul li.selected a {
+  color: var(--tm-gold) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MESSAGES / ALERTS
+══════════════════════════════════════════════════════════ */
+.alert-success,
+.messages li.success {
+  background: rgba(61,220,132,0.12) !important;
+  border: 1px solid rgba(61,220,132,0.35) !important;
+  color: var(--tm-green) !important;
+  border-radius: 8px !important;
+}
+.alert-warning,
+.messages li.warning {
+  background: rgba(212,170,80,0.12) !important;
+  border: 1px solid rgba(212,170,80,0.35) !important;
+  color: var(--tm-gold) !important;
+  border-radius: 8px !important;
+}
+.alert-danger,
+.messages li.error {
+  background: rgba(255,90,90,0.12) !important;
+  border: 1px solid rgba(255,90,90,0.35) !important;
+  color: var(--tm-red) !important;
+  border-radius: 8px !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════════════════ */
+.main-footer {
+  background: var(--tm-navy-mid) !important;
+  border-top: 1px solid rgba(212,170,80,0.12) !important;
+  color: var(--tm-muted) !important;
+  font-size: 0.8rem;
+}
+
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD WELCOME / INFO BOXES
+══════════════════════════════════════════════════════════ */
+.info-box {
+  background: var(--tm-navy-mid) !important;
+  border: 1px solid rgba(212,170,80,0.15) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
+}
+.info-box-icon {
+  background: rgba(212,170,80,0.15) !important;
+  border-radius: 10px 0 0 10px !important;
+  color: var(--tm-gold) !important;
+}
+.info-box-number {
+  color: var(--tm-gold) !important;
+  font-family: 'Playfair Display', serif !important;
+  font-size: 1.8rem !important;
+}
+.info-box-text {
+  color: var(--tm-muted) !important;
+  font-size: 0.82rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SMALL DETAIL TWEAKS
+══════════════════════════════════════════════════════════ */
+
+/* Object tools (top right of change pages) */
+#object-tools a {
+  background: rgba(212,170,80,0.1) !important;
+  border: 1px solid rgba(212,170,80,0.3) !important;
+  color: var(--tm-gold) !important;
+  border-radius: 999px !important;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.9rem !important;
+  transition: all 0.2s;
+}
+#object-tools a:hover {
+  background: rgba(212,170,80,0.2) !important;
+  color: var(--tm-gold-light) !important;
+}
+
+/* Help text under fields */
+.help {
+  color: var(--tm-muted) !important;
+  font-size: 0.78rem !important;
+}
+
+/* Inline tables */
+.inline-group {
+  border: 1px solid rgba(212,170,80,0.15) !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+.inline-group h2 {
+  background: rgba(212,170,80,0.08) !important;
+  color: var(--tm-gold) !important;
+  font-family: 'Playfair Display', serif !important;
+  font-size: 0.95rem !important;
+  padding: 0.75rem 1rem !important;
+  border-bottom: 1px solid rgba(212,170,80,0.15) !important;
+}
+
+/* Checkboxes */
+input[type="checkbox"] {
+  accent-color: var(--tm-gold) !important;
+  width: 16px;
+  height: 16px;
+}
+
+/* Select2 (if used) */
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(212,170,80,0.2) !important;
+  border-radius: 8px !important;
+  color: var(--tm-cream) !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: var(--tm-cream) !important;
+}
+.select2-dropdown {
+  background: var(--tm-navy-mid) !important;
+  border: 1px solid rgba(212,170,80,0.2) !important;
+  border-radius: 8px !important;
+}
+.select2-container--default .select2-results__option--highlighted {
+  background: rgba(212,170,80,0.15) !important;
+  color: var(--tm-gold) !important;
+}

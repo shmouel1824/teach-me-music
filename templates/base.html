@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +7,7 @@
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Frank+Ruhl+Libre:wght@300;400;500;700&display=swap" rel="stylesheet">
 
   <style>
     /* ════════════════════════════════════════════════
@@ -28,13 +28,12 @@
       --green:     #2ecc71;
       --red:       #e74c3c;
       --text:      #f5f0e8;
-      --text-muted:#8a9bb5;
+      --text-muted:#a8b8cc;
       --radius:    12px;
       --shadow:    0 8px 32px rgba(0,0,0,0.35);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -43,6 +42,12 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      transition: font-family 0.2s;
+    }
+
+    /* Hebrew font override */
+    body.lang-he {
+      font-family: 'Frank Ruhl Libre', serif;
     }
 
     /* Subtle staff-line background pattern */
@@ -73,6 +78,7 @@
       background: rgba(15,27,45,0.92);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(201,168,76,0.2);
+      gap: 1rem;
     }
 
     .nav-logo {
@@ -84,6 +90,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      flex-shrink: 0;
     }
     .nav-logo .clef { font-size: 1.6rem; }
 
@@ -101,7 +108,7 @@
       border-radius: 8px;
       text-decoration: none;
       color: var(--text-muted);
-      font-size: 0.875rem;
+      font-size: 0.95rem;
       font-weight: 500;
       letter-spacing: 0.02em;
       transition: all 0.2s;
@@ -111,6 +118,58 @@
     .nav-links a.active {
       color: var(--gold);
       background: rgba(201,168,76,0.1);
+    }
+
+    /* ── Language Switcher ────────────────────────── */
+    .lang-switcher {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 10px;
+      padding: 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .lang-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+
+    .lang-btn:hover {
+      color: var(--gold);
+      background: rgba(201,168,76,0.08);
+    }
+
+    .lang-btn.active {
+      background: rgba(201,168,76,0.15);
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .lang-flag {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .lang-sep {
+      width: 1px;
+      height: 16px;
+      background: rgba(201,168,76,0.15);
     }
 
     /* ── Page wrapper ─────────────────────────────── */
@@ -200,6 +259,12 @@
       gap: 0.5rem;
     }
 
+    /* RTL: flip toast to left side */
+    body[dir="rtl"] #toast-container {
+      right: auto;
+      left: 1.5rem;
+    }
+
     .toast {
       padding: 0.75rem 1.2rem;
       border-radius: 10px;
@@ -209,9 +274,9 @@
       animation: slideIn 0.3s ease, fadeOut 0.4s ease 2.6s forwards;
       max-width: 320px;
     }
-    .toast-success { background: rgba(46,204,113,0.2); border: 1px solid rgba(46,204,113,0.4); color: var(--green); }
-    .toast-error   { background: rgba(231,76,60,0.2);  border: 1px solid rgba(231,76,60,0.4);  color: var(--red); }
-    .toast-info    { background: rgba(201,168,76,0.2); border: 1px solid rgba(201,168,76,0.4); color: var(--gold); }
+    .toast-success { background: rgba(46,204,113,0.2);  border: 1px solid rgba(46,204,113,0.4);  color: var(--green); }
+    .toast-error   { background: rgba(231,76,60,0.2);   border: 1px solid rgba(231,76,60,0.4);   color: var(--red); }
+    .toast-info    { background: rgba(201,168,76,0.2);  border: 1px solid rgba(201,168,76,0.4);  color: var(--gold); }
 
     @keyframes slideIn {
       from { opacity: 0; transform: translateX(30px); }
@@ -219,6 +284,17 @@
     }
     @keyframes fadeOut {
       to { opacity: 0; transform: translateX(30px); }
+    }
+
+    body[dir="rtl"] .toast {
+      animation: slideInRTL 0.3s ease, fadeOutRTL 0.4s ease 2.6s forwards;
+    }
+    @keyframes slideInRTL {
+      from { opacity: 0; transform: translateX(-30px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeOutRTL {
+      to { opacity: 0; transform: translateX(-30px); }
     }
 
     /* ── Misc utilities ───────────────────────────── */
@@ -238,7 +314,8 @@
     /* ── Responsive ───────────────────────────────── */
     @media (max-width: 768px) {
       .page { padding: 1rem 1rem 3rem; }
-      nav { padding: 0 1rem; }
+      nav { padding: 0 1rem; height: auto; flex-wrap: wrap; padding: 0.6rem 1rem; }
+      .lang-btn .lang-name { display: none; } /* show flag only on mobile */
     }
   </style>
 
@@ -250,11 +327,32 @@
   <a href="{% url 'exercises:play' %}" class="nav-logo">
     <span class="clef">𝄞</span> Teach Me Music
   </a>
+
   <ul class="nav-links">
-    <li><a href="{% url 'exercises:play' %}"      id="nav-play">🎹 Exercices</a></li>
-    <li><a href="{% url 'dashboard:dashboard' %}" id="nav-dash">📊 Progrès</a></li>
-    <li><a href="/admin/"                          id="nav-admin">⚙️ Admin</a></li>
+    <li><a href="{% url 'exercises:play' %}"      id="nav-play">🎹 <span data-i18n="nav_exercises">Exercices</span></a></li>
+    <li><a href="{% url 'dashboard:dashboard' %}" id="nav-dash">📊 <span data-i18n="nav_progress">Progrès</span></a></li>
+    {% if request.user.is_staff %}
+    <li><a href="/admin/" id="nav-admin" style="border:1px solid rgba(212,170,80,0.35);border-radius:8px;">⚙️ <span data-i18n="nav_admin">Admin</span></a></li>
+    {% endif %}
   </ul>
+
+  <!-- ── Language Switcher ── -->
+  <div class="lang-switcher" role="group" aria-label="Language / Langue / שפה">
+    <button class="lang-btn" data-lang="fr" onclick="setLanguage('fr')" title="Français">
+      <span class="lang-flag">🇫🇷</span>
+      <span class="lang-name">FR</span>
+    </button>
+    <div class="lang-sep"></div>
+    <button class="lang-btn" data-lang="en" onclick="setLanguage('en')" title="English">
+      <span class="lang-flag">🇬🇧</span>
+      <span class="lang-name">EN</span>
+    </button>
+    <div class="lang-sep"></div>
+    <button class="lang-btn" data-lang="he" onclick="setLanguage('he')" title="עברית">
+      <span class="lang-flag">🇮🇱</span>
+      <span class="lang-name">עב</span>
+    </button>
+  </div>
 </nav>
 
 <div id="toast-container"></div>
@@ -263,27 +361,386 @@
   {% block content %}{% endblock %}
 </main>
 
+<!-- ══════════════════════════════════════════════════════════════
+     TRANSLATION ENGINE
+     All translatable strings for the entire app live here.
+     To add a new string: add a key to each of the 3 languages.
+     To translate a new template: add data-i18n="your_key" to the element.
+════════════════════════════════════════════════════════════════ -->
 <script>
-  // ── Active nav link ──────────────────────────────
-  const path = window.location.pathname;
-  if (path.startsWith('/play') || path === '/') document.getElementById('nav-play').classList.add('active');
-  if (path.startsWith('/dashboard'))             document.getElementById('nav-dash').classList.add('active');
+'use strict';
 
-  // ── Global toast helper ──────────────────────────
-  function showToast(message, type = 'info') {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    container.appendChild(toast);
-    setTimeout(() => toast.remove(), 3200);
+// ── Translation dictionary ────────────────────────────────────
+const TRANSLATIONS = {
+
+  fr: {
+    // Navigation
+    nav_exercises:        'Exercices',
+    nav_progress:         'Progrès',
+    nav_admin:            'Admin',
+
+    // Play page — header stats
+    stat_exercises:       'exercices',
+    stat_correct:         'corrects',
+    stat_streak:          'série',
+    stat_progress:        '📊 Progrès',
+    stat_sound:           '🔊 Son',
+    stat_muted:           '🔇 Muet',
+
+    // Play page — selectors
+    sel_note_type:        '🎵 Type de notes',
+    sel_natural:          '♩ Naturelles',
+    sel_sharps:           '♩ + Dièses ♯',
+    sel_flats:            '♩ + Bémols ♭',
+    sel_all:              'Toutes ♯♭',
+    sel_octaves:          '🎹 Octaves',
+    sel_notes_per_ex:     '📝 Notes / exercice',
+    sel_labels_visible:   '🏷️ Noms visibles',
+    sel_labels_hidden:    '🙈 Noms cachés',
+
+    // Play page — mode descriptions
+    mode_label_1:         '1 note',
+    mode_label_2:         '2 notes',
+    mode_label_3:         '3 notes',
+    mode_label_4:         '4 notes',
+    mode_label_5:         '5 notes',
+    mode_desc_1:          'jouez la note affichée',
+    mode_desc_2:          "jouez les 2 notes dans l'ordre",
+    mode_desc_3:          "jouez les 3 notes dans l'ordre",
+    mode_desc_4:          "jouez les 4 notes dans l'ordre",
+    mode_desc_5:          "jouez les 5 notes dans l'ordre",
+
+    // Play page — piano section
+    piano_label:          'Clavier Virtuel · DO3 → DO6 · 37 notes',
+    piano_hint:           '💡 Raccourcis clavier : A=DO4 · S=RE4 · D=MI4 · F=FA4 · G=SOL4 · H=LA4 · J=SI4 · K=DO5 …',
+    piano_ml_loading:     'Modèle ML…',
+
+    // Play page — score section labels
+    score_exercises:      'Exercices',
+    score_correct:        'Corrects',
+    score_streak:         'Série',
+    score_rate:           '% succès',
+
+    // Play page — feedback messages (used by JS)
+    msg_play_note:        'Jouez la note indiquée ↓',
+    msg_thinking:         'Reconnaissance…',
+    msg_correct_seq:      'Séquence complète !',
+    msg_bravo:            'Bravo !',
+    msg_confidence:       'Confiance',
+    msg_demo:             '[démo]',
+    msg_next_note:        'Note {idx}/{total} — jouez la suivante !',
+    msg_wrong:            'Mauvaise note — réessayez !',
+    msg_error:            'Erreur de connexion au modèle',
+
+    // Dashboard — header
+    dash_title:           'Progrès',
+    dash_back:            '🎹 Retour aux exercices',
+    dash_reset:           '🔄 Réinitialiser l\'apprentissage',
+    dash_reset_confirm:   "Réinitialiser tout l'historique d'apprentissage ? Cette action est irréversible.",
+
+    // Dashboard — KPI labels
+    kpi_total:            'Exercices total',
+    kpi_rate:             'Taux de succès global',
+    kpi_rate_sub:         'sur tous les exercices',
+    kpi_mastered:         'Notes maîtrisées',
+    kpi_mastered_sub:     '≥ 80% de succès',
+    kpi_weak:             'Notes à travailler',
+    kpi_weak_sub:         '< 65% de succès',
+
+    // Dashboard — section titles
+    section_weak:         '⚠️ Notes à renforcer',
+    section_strong:       '✅ Notes maîtrisées',
+    section_all_notes:    '🎹 Toutes les notes — DO3 → DO6',
+
+    // Dashboard — legend
+    legend_mastered:      'Maîtrisé (≥80%)',
+    legend_learning:      'En apprentissage (65–79%)',
+    legend_weak:          'À travailler (<65%)',
+    legend_unseen:        'Pas encore vu',
+
+    // Dashboard — empty states
+    empty_weak:           'Aucune note faible détectée encore — continuez les exercices !',
+    empty_strong:         'Continuez les exercices pour voir vos notes maîtrisées !',
+
+    // Dashboard — attempts
+    attempt_singular:     'essai',
+    attempt_plural:       'essais',
+
+    // Dashboard — loading
+    loading:              'Chargement…',
+
+    // Octave labels
+    octave_label:         'Octave',
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  en: {
+    nav_exercises:        'Exercises',
+    nav_progress:         'Progress',
+    nav_admin:            'Admin',
+
+    stat_exercises:       'exercises',
+    stat_correct:         'correct',
+    stat_streak:          'streak',
+    stat_progress:        '📊 Progress',
+    stat_sound:           '🔊 Sound',
+    stat_muted:           '🔇 Muted',
+
+    sel_note_type:        '🎵 Note type',
+    sel_natural:          '♩ Natural',
+    sel_sharps:           '♩ + Sharps ♯',
+    sel_flats:            '♩ + Flats ♭',
+    sel_all:              'All ♯♭',
+    sel_octaves:          '🎹 Octaves',
+    sel_notes_per_ex:     '📝 Notes / exercise',
+    sel_labels_visible:   '🏷️ Labels visible',
+    sel_labels_hidden:    '🙈 Labels hidden',
+
+    mode_label_1:         '1 note',
+    mode_label_2:         '2 notes',
+    mode_label_3:         '3 notes',
+    mode_label_4:         '4 notes',
+    mode_label_5:         '5 notes',
+    mode_desc_1:          'play the displayed note',
+    mode_desc_2:          'play the 2 notes in order',
+    mode_desc_3:          'play the 3 notes in order',
+    mode_desc_4:          'play the 4 notes in order',
+    mode_desc_5:          'play the 5 notes in order',
+
+    piano_label:          'Virtual Keyboard · DO3 → DO6 · 37 notes',
+    piano_hint:           '💡 Keyboard shortcuts: A=DO4 · S=RE4 · D=MI4 · F=FA4 · G=SOL4 · H=LA4 · J=SI4 · K=DO5 …',
+    piano_ml_loading:     'ML Model…',
+
+    score_exercises:      'Exercises',
+    score_correct:        'Correct',
+    score_streak:         'Streak',
+    score_rate:           '% success',
+
+    msg_play_note:        'Play the indicated note ↓',
+    msg_thinking:         'Recognizing…',
+    msg_correct_seq:      'Sequence complete!',
+    msg_bravo:            'Well done!',
+    msg_confidence:       'Confidence',
+    msg_demo:             '[demo]',
+    msg_next_note:        'Note {idx}/{total} — play the next one!',
+    msg_wrong:            'Wrong note — try again!',
+    msg_error:            'Connection error with the model',
+
+    dash_title:           'Progress',
+    dash_back:            '🎹 Back to exercises',
+    dash_reset:           '🔄 Reset learning',
+    dash_reset_confirm:   'Reset all learning history? This cannot be undone.',
+
+    kpi_total:            'Total exercises',
+    kpi_rate:             'Overall success rate',
+    kpi_rate_sub:         'across all exercises',
+    kpi_mastered:         'Notes mastered',
+    kpi_mastered_sub:     '≥ 80% success',
+    kpi_weak:             'Notes to work on',
+    kpi_weak_sub:         '< 65% success',
+
+    section_weak:         '⚠️ Notes to strengthen',
+    section_strong:       '✅ Mastered notes',
+    section_all_notes:    '🎹 All notes — DO3 → DO6',
+
+    legend_mastered:      'Mastered (≥80%)',
+    legend_learning:      'Learning (65–79%)',
+    legend_weak:          'Needs work (<65%)',
+    legend_unseen:        'Not seen yet',
+
+    empty_weak:           'No weak notes detected yet — keep practising!',
+    empty_strong:         'Keep doing exercises to see your mastered notes!',
+
+    attempt_singular:     'attempt',
+    attempt_plural:       'attempts',
+
+    loading:              'Loading…',
+    octave_label:         'Octave',
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  he: {
+    nav_exercises:        'תרגילים',
+    nav_progress:         'התקדמות',
+    nav_admin:            'ניהול',
+
+    stat_exercises:       'תרגילים',
+    stat_correct:         'נכונים',
+    stat_streak:          'רצף',
+    stat_progress:        '📊 התקדמות',
+    stat_sound:           '🔊 צליל',
+    stat_muted:           '🔇 מושתק',
+
+    sel_note_type:        '🎵 סוג תווים',
+    sel_natural:          '♩ טבעיים',
+    sel_sharps:           '♩ + דיאזים ♯',
+    sel_flats:            '♩ + במולים ♭',
+    sel_all:              'הכל ♯♭',
+    sel_octaves:          '🎹 אוקטבות',
+    sel_notes_per_ex:     '📝 תווים / תרגיל',
+    sel_labels_visible:   '🏷️ שמות גלויים',
+    sel_labels_hidden:    '🙈 שמות מוסתרים',
+
+    mode_label_1:         'תו 1',
+    mode_label_2:         '2 תווים',
+    mode_label_3:         '3 תווים',
+    mode_label_4:         '4 תווים',
+    mode_label_5:         '5 תווים',
+    mode_desc_1:          'נגן את התו המוצג',
+    mode_desc_2:          'נגן את 2 התווים לפי הסדר',
+    mode_desc_3:          'נגן את 3 התווים לפי הסדר',
+    mode_desc_4:          'נגן את 4 התווים לפי הסדר',
+    mode_desc_5:          'נגן את 5 התווים לפי הסדר',
+
+    piano_label:          'מקלדת וירטואלית · DO3 ← DO6 · 37 תווים',
+    piano_hint:           '💡 קיצורי מקלדת: A=DO4 · S=RE4 · D=MI4 · F=FA4 · G=SOL4 · H=LA4 · J=SI4 · K=DO5 …',
+    piano_ml_loading:     'מודל ML…',
+
+    score_exercises:      'תרגילים',
+    score_correct:        'נכונים',
+    score_streak:         'רצף',
+    score_rate:           '% הצלחה',
+
+    msg_play_note:        'נגן את התו המסומן ↓',
+    msg_thinking:         'מזהה…',
+    msg_correct_seq:      '!הרצף הושלם',
+    msg_bravo:            '!כל הכבוד',
+    msg_confidence:       'ביטחון',
+    msg_demo:             '[הדגמה]',
+    msg_next_note:        'תו {idx}/{total} — נגן את הבא!',
+    msg_wrong:            'תו שגוי — נסה שוב!',
+    msg_error:            'שגיאת חיבור למודל',
+
+    dash_title:           'התקדמות',
+    dash_back:            '🎹 חזרה לתרגילים',
+    dash_reset:           '🔄 אפס למידה',
+    dash_reset_confirm:   'לאפס את כל היסטוריית הלמידה? פעולה זו אינה הפיכה.',
+
+    kpi_total:            'סה"כ תרגילים',
+    kpi_rate:             'אחוז הצלחה כולל',
+    kpi_rate_sub:         'על פני כל התרגילים',
+    kpi_mastered:         'תווים שנרכשו',
+    kpi_mastered_sub:     '≥ 80% הצלחה',
+    kpi_weak:             'תווים לתרגול',
+    kpi_weak_sub:         '< 65% הצלחה',
+
+    section_weak:         '⚠️ תווים לחיזוק',
+    section_strong:       '✅ תווים שנרכשו',
+    section_all_notes:    '🎹 כל התווים — DO3 ← DO6',
+
+    legend_mastered:      'נרכש (≥80%)',
+    legend_learning:      'בלמידה (65–79%)',
+    legend_weak:          'לתרגול (<65%)',
+    legend_unseen:        'טרם נראה',
+
+    empty_weak:           '!עדיין לא זוהו תווים חלשים — המשך להתאמן',
+    empty_strong:         '!המשך לתרגל כדי לראות את התווים שנרכשו',
+
+    attempt_singular:     'ניסיון',
+    attempt_plural:       'ניסיונות',
+
+    loading:              'טוען…',
+    octave_label:         'אוקטבה',
+  },
+};
+
+// ── Current language state ────────────────────────────────────
+let currentLang = localStorage.getItem('tmm_lang') || 'fr';
+
+// ── Public API: t() — translate a key ────────────────────────
+// Available to play.html, dashboard.html, etc via window.t()
+function t(key, vars) {
+  const lang = TRANSLATIONS[currentLang] || TRANSLATIONS['fr'];
+  let str = lang[key] || TRANSLATIONS['fr'][key] || key;
+  // Simple variable substitution: {idx}, {total} etc.
+  if (vars) {
+    Object.entries(vars).forEach(([k, v]) => {
+      str = str.replace(`{${k}}`, v);
+    });
+  }
+  return str;
+}
+window.t = t;
+
+// ── Apply language to the whole page ─────────────────────────
+function applyLanguage(lang) {
+  const html = document.documentElement;
+  const body = document.body;
+
+  // 1. Direction + lang attribute
+  if (lang === 'he') {
+    html.setAttribute('dir', 'rtl');
+    html.setAttribute('lang', 'he');
+    body.setAttribute('dir', 'rtl');
+    body.classList.add('lang-he');
+  } else {
+    html.setAttribute('dir', 'ltr');
+    html.setAttribute('lang', lang);
+    body.removeAttribute('dir');
+    body.classList.remove('lang-he');
   }
 
-  // ── CSRF helper ──────────────────────────────────
-  function getCookie(name) {
-    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    return match ? decodeURIComponent(match[2]) : null;
-  }
+  // 2. Translate all elements with data-i18n attribute
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const translation = t(key);
+    // Preserve inner HTML structure (e.g. icons before text)
+    // Only replace text nodes, not child elements
+    if (el.children.length === 0) {
+      el.textContent = translation;
+    } else {
+      el.setAttribute('data-i18n-pending', key);
+    }
+    el.textContent = translation;
+  });
+
+  // 3. Update active button in switcher
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+
+  // 4. Notify child pages that language changed
+  // (play.html and dashboard.html listen to this event)
+  document.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
+}
+
+// ── Set language (called by button clicks) ────────────────────
+function setLanguage(lang) {
+  if (!TRANSLATIONS[lang]) return;
+  currentLang = lang;
+  localStorage.setItem('tmm_lang', lang);
+  applyLanguage(lang);
+}
+window.setLanguage  = setLanguage;
+window.currentLang  = () => currentLang;
+
+// ── Active nav link ──────────────────────────────────────────
+const path = window.location.pathname;
+if (path.startsWith('/play') || path === '/') document.getElementById('nav-play')?.classList.add('active');
+if (path.startsWith('/dashboard'))             document.getElementById('nav-dash')?.classList.add('active');
+
+// ── Global toast helper ──────────────────────────────────────
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3200);
+}
+window.showToast = showToast;
+
+// ── CSRF helper ──────────────────────────────────────────────
+function getCookie(name) {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? decodeURIComponent(match[2]) : null;
+}
+window.getCookie = getCookie;
+
+// ── Init: apply saved language on every page load ────────────
+document.addEventListener('DOMContentLoaded', () => {
+  applyLanguage(currentLang);
+});
 </script>
 
 {% block extra_scripts %}{% endblock %}
