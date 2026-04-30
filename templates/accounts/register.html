@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscription — Teach Me Music</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0b0907; --surface:#151008; --surface2:#1d1610;
+  --border:rgba(210,175,100,0.18); --gold:#d4aa50; --gold2:#f0cc78;
+  --ivory:#f5f0e2; --ivory-dim:#c8c0a8; --green:#3ddc84; --red:#ff5a5a;
+  --muted:#6b5e48; --r:16px;
+}
+body {
+  font-family:'Outfit',sans-serif; background:var(--bg); color:var(--ivory);
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  background-image:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(80,50,10,0.4) 0%,transparent 70%);
+  padding:2rem 1rem;
+}
+.card {
+  width:100%; max-width:720px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); padding:2.5rem 2rem;
+  box-shadow:0 24px 80px rgba(0,0,0,0.7);
+}
+.logo { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:var(--gold); text-align:center; margin-bottom:0.2rem; letter-spacing:0.04em; }
+.logo span { font-style:italic; color:var(--gold2); }
+.subtitle { text-align:center; font-size:0.8rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:2rem; }
+
+h2 { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:var(--ivory); text-align:center; margin-bottom:0.4rem; }
+.desc { text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:1.8rem; line-height:1.6; }
+.desc strong { color:var(--gold2); }
+
+/* Username field */
+.field { margin-bottom:1.5rem; }
+.field label { display:block; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5rem; }
+.field input {
+  width:100%; background:var(--surface2); border:1.5px solid var(--border);
+  border-radius:10px; padding:0.75rem 1rem; color:var(--ivory);
+  font-family:'Outfit',sans-serif; font-size:1rem; outline:none;
+  transition:border-color 0.2s;
+}
+.field input:focus { border-color:var(--gold); }
+.field input::placeholder { color:var(--muted); }
+
+/* Notes display */
+.notes-display {
+  display:flex; gap:0.5rem; justify-content:center; margin-bottom:1.2rem;
+  min-height:52px; align-items:center;
+}
+.note-bubble {
+  width:48px; height:48px; border-radius:50%;
+  border:2px solid var(--border); background:var(--surface2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.72rem; font-weight:700; color:var(--muted);
+  transition:all 0.3s; letter-spacing:0.04em;
+}
+.note-bubble.filled { border-color:var(--gold); background:rgba(212,170,80,0.15); color:var(--gold2); }
+.note-bubble.filled.correct { border-color:var(--green); background:rgba(61,220,132,0.12); color:var(--green); }
+
+.notes-label { font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); text-align:center; margin-bottom:0.8rem; }
+.notes-label span { color:var(--gold2); font-weight:700; }
+
+/* Piano */
+.piano-wrap { display:flex; flex-direction:column; align-items:center; margin-bottom:1.5rem; }
+.piano { position:relative; display:flex; user-select:none; filter:drop-shadow(0 8px 24px rgba(0,0,0,0.6)); }
+.key-w { position:relative; background:linear-gradient(180deg,#f6f1e3 0%,#e9e0cc 85%,#d8cebc 100%); border:1px solid #b0a080; border-bottom:4px solid #9a8a68; border-radius:0 0 7px 7px; cursor:pointer; flex-shrink:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding-bottom:6px; z-index:1; transition:background 0.07s,transform 0.07s; box-shadow:inset 0 -3px 8px rgba(0,0,0,0.1); }
+.key-w:hover { background:linear-gradient(180deg,#fffdf5 0%,#f5ecda 100%); }
+.key-w:active,.key-w.pressed { background:linear-gradient(180deg,#ddd0b2 0%,#ccc0a0 100%); transform:translateY(3px); }
+.key-w.flash { background:linear-gradient(180deg,#b0f8d0 0%,#6ed898 100%) !important; border-color:var(--green) !important; }
+.key-label { font-family:'Outfit',sans-serif; font-weight:700; color:#5a4530; font-size:9px; text-align:center; line-height:1.2; pointer-events:none; }
+.key-b { position:absolute; background:linear-gradient(180deg,#221a0c 0%,#0e0b06 55%,#1c1408 100%); border:1px solid #080604; border-bottom:3px solid #000; border-radius:0 0 5px 5px; cursor:pointer; z-index:2; top:0; transition:background 0.07s,transform 0.07s; box-shadow:2px 4px 8px rgba(0,0,0,0.6); }
+.key-b:hover { background:linear-gradient(180deg,#302010 0%,#181008 100%); }
+.key-b:active,.key-b.pressed { transform:translateY(2px); }
+.key-b.flash { background:linear-gradient(180deg,#1a9050 0%,#0d5030 100%) !important; border-color:var(--green) !important; }
+
+/* Actions */
+.actions { display:flex; gap:0.75rem; flex-wrap:wrap; }
+.btn {
+  flex:1; min-width:120px; padding:0.85rem 1rem; border-radius:10px;
+  font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:600;
+  cursor:pointer; border:none; transition:all 0.2s; text-align:center;
+}
+.btn-primary { background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#1a1208; }
+.btn-primary:hover { filter:brightness(1.1); transform:translateY(-1px); }
+.btn-primary:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+.btn-ghost { background:var(--surface2); border:1.5px solid var(--border); color:var(--ivory-dim); }
+.btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
+
+.error-msg { background:rgba(255,90,90,0.1); border:1px solid rgba(255,90,90,0.3); border-radius:8px; padding:0.7rem 1rem; font-size:0.85rem; color:var(--red); margin-bottom:1rem; display:none; }
+.error-msg.show { display:block; }
+
+.login-link { text-align:center; margin-top:1.5rem; font-size:0.82rem; color:var(--muted); }
+.login-link a { color:var(--gold); text-decoration:none; font-weight:600; }
+.login-link a:hover { color:var(--gold2); }
+
+.step-indicator { display:flex; align-items:center; justify-content:center; gap:0.5rem; margin-bottom:1.5rem; }
+.step { width:28px; height:28px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; color:var(--muted); transition:all 0.3s; }
+.step.active { border-color:var(--gold); color:var(--gold); background:rgba(212,170,80,0.1); }
+.step.done { border-color:var(--green); color:var(--green); background:rgba(61,220,132,0.1); }
+.step-line { width:40px; height:2px; background:var(--border); border-radius:1px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">𝄞 Teach Me <span>Music</span></div>
+  <div class="subtitle">Création de compte</div>
+
+  <div class="step-indicator">
+    <div class="step active" id="step1">1</div>
+    <div class="step-line"></div>
+    <div class="step" id="step2">2</div>
+    <div class="step-line"></div>
+    <div class="step" id="step3">✓</div>
+  </div>
+
+  <div class="error-msg" id="error-msg"></div>
+
+  <!-- Step 1: Username -->
+  <div id="panel-username">
+    <h2>Choisissez votre nom</h2>
+    <p class="desc">Votre identifiant sur Teach Me Music</p>
+    <div class="field">
+      <label>Nom d'utilisateur</label>
+      <input type="text" id="username" placeholder="ex: mozart42" autocomplete="off" maxlength="30">
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="goToStep2()">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Musical password -->
+  <div id="panel-notes" style="display:none">
+    <h2>Votre mot de passe musical</h2>
+    <p class="desc">Jouez <strong>5 notes</strong> dans l'ordre — ce sera votre clé secrète.<br>Choisissez une mélodie mémorable !</p>
+
+    <div class="notes-label">Notes jouées : <span id="notes-count">0</span> / 5</div>
+    <div class="notes-display" id="notes-display">
+      <div class="note-bubble" id="b0">♩</div>
+      <div class="note-bubble" id="b1">♩</div>
+      <div class="note-bubble" id="b2">♩</div>
+      <div class="note-bubble" id="b3">♩</div>
+      <div class="note-bubble" id="b4">♩</div>
+    </div>
+
+    <div class="piano-wrap">
+      <div class="piano" id="piano"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="resetNotes()">↺ Recommencer</button>
+      <button class="btn btn-primary" id="btn-confirm" onclick="confirmPassword()" disabled>Confirmer ✓</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Confirm (re-play) -->
+  <div id="panel-confirm" style="display:none">
+    <h2>Confirmez votre mélodie</h2>
+    <p class="desc">Rejouez les <strong>5 mêmes notes</strong> pour confirmer votre mot de passe musical.</p>
+
+    <div class="notes-label">Notes jouées : <span id="confirm-count">0</span> / 5</div>
+    <div class="notes-display" id="confirm-display">
+      <div class="note-bubble" id="c0">♩</div>
+      <div class="note-bubble" id="c1">♩</div>
+      <div class="note-bubble" id="c2">♩</div>
+      <div class="note-bubble" id="c3">♩</div>
+      <div class="note-bubble" id="c4">♩</div>
+    </div>
+
+    <div class="piano-wrap">
+      <div class="piano" id="piano2"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="backToStep2()">← Changer</button>
+      <button class="btn btn-primary" id="btn-register" onclick="submitRegister()" disabled>Créer mon compte 🎵</button>
+    </div>
+  </div>
+
+  <div class="login-link">Déjà un compte ? <a href="{% url 'accounts:login' %}">Se connecter</a></div>
+</div>
+
+<script>
+const NOTES_DATA = [
+  {fr:'DO4',freq:261.63,white:true},{fr:'DO#4',freq:277.18,white:false},
+  {fr:'RE4',freq:293.66,white:true},{fr:'RE#4',freq:311.13,white:false},
+  {fr:'MI4',freq:329.63,white:true},{fr:'FA4',freq:349.23,white:true},
+  {fr:'FA#4',freq:369.99,white:false},{fr:'SOL4',freq:392.00,white:true},
+  {fr:'SOL#4',freq:415.30,white:false},{fr:'LA4',freq:440.00,white:true},
+  {fr:'LA#4',freq:466.16,white:false},{fr:'SI4',freq:493.88,white:true},
+  {fr:'DO5',freq:523.25,white:true},{fr:'DO#5',freq:554.37,white:false},
+  {fr:'RE5',freq:587.33,white:true},{fr:'RE#5',freq:622.25,white:false},
+  {fr:'MI5',freq:659.25,white:true},
+];
+
+let chosenNotes   = [];   // Step 2
+let confirmedNotes = [];  // Step 3
+let audioCtx = null;
+
+function getCtx() {
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)({sampleRate:22050});
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  return audioCtx;
+}
+function playNote(freq) {
+  const ctx=getCtx();
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0,ctx.currentTime);
+  g.gain.linearRampToValueAtTime(0.5,ctx.currentTime+0.01);
+  g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2);
+  g.connect(ctx.destination);
+  [[1,1],[2,.45],[3,.25],[4,.12]].forEach(([h,v])=>{
+    const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=freq*h;
+    const gn=ctx.createGain(); gn.gain.value=v;
+    o.connect(gn); gn.connect(g); o.start(ctx.currentTime); o.stop(ctx.currentTime+1.2);
+  });
+}
+
+function buildPiano(containerId, onKey) {
+  const el = document.getElementById(containerId);
+  const W = Math.min(el.parentElement.offsetWidth - 40, 580);
+  const whites = NOTES_DATA.filter(n=>n.white);
+  const WK = Math.floor(W / whites.length);
+  const HW = Math.round(WK * 5.5);
+  const WB = Math.round(WK * 0.6);
+  const HB = Math.round(HW * 0.6);
+  el.style.width = (whites.length * WK) + 'px';
+  el.style.height = HW + 'px';
+
+  whites.forEach(note => {
+    const k = document.createElement('div');
+    k.className='key-w'; k.dataset.note=note.fr;
+    k.style.width=WK+'px'; k.style.height=HW+'px';
+    const lbl=document.createElement('span');
+    lbl.className='key-label';
+    lbl.innerHTML=note.fr.replace(/(\d+)$/,'<br>$1');
+    k.appendChild(lbl);
+    k.addEventListener('mousedown', e=>{e.preventDefault(); onKey(note,k);});
+    k.addEventListener('touchstart', e=>{e.preventDefault(); onKey(note,k);},{passive:false});
+    el.appendChild(k);
+  });
+
+  let wi=-1;
+  NOTES_DATA.forEach(note=>{
+    if(note.white){wi++;return;}
+    const k=document.createElement('div');
+    k.className='key-b'; k.dataset.note=note.fr;
+    k.style.width=WB+'px'; k.style.height=HB+'px';
+    k.style.left=(wi*WK+WK-WB/2)+'px';
+    k.addEventListener('mousedown',e=>{e.preventDefault();onKey(note,k);});
+    k.addEventListener('touchstart',e=>{e.preventDefault();onKey(note,k);},{passive:false});
+    el.appendChild(k);
+  });
+}
+
+// ── Step 1 ────────────────────────────────────────────────────
+function goToStep2() {
+  const u = document.getElementById('username').value.trim();
+  if(u.length < 3) { showError('Nom d\'utilisateur trop court (min 3 caractères).'); return; }
+  hideError();
+  document.getElementById('panel-username').style.display='none';
+  document.getElementById('panel-notes').style.display='block';
+  document.getElementById('step1').className='step done';
+  document.getElementById('step2').className='step active';
+  buildPiano('piano', onStep2Key);
+}
+
+// ── Step 2 ────────────────────────────────────────────────────
+function onStep2Key(note, keyEl) {
+  if(chosenNotes.length >= 5) return;
+  playNote(note.freq);
+  keyEl.classList.add('flash');
+  setTimeout(()=>keyEl.classList.remove('flash'), 600);
+  chosenNotes.push(note.fr);
+  updateBubbles('notes-display', 'b', chosenNotes, 'notes-count');
+  if(chosenNotes.length === 5) {
+    document.getElementById('btn-confirm').disabled = false;
+  }
+}
+
+function resetNotes() {
+  chosenNotes = [];
+  updateBubbles('notes-display','b',[],  'notes-count');
+  document.getElementById('btn-confirm').disabled = true;
+}
+
+function confirmPassword() {
+  document.getElementById('panel-notes').style.display='none';
+  document.getElementById('panel-confirm').style.display='block';
+  document.getElementById('step2').className='step done';
+  document.getElementById('step3').className='step active';
+  buildPiano('piano2', onStep3Key);
+}
+
+// ── Step 3 ────────────────────────────────────────────────────
+function onStep3Key(note, keyEl) {
+  if(confirmedNotes.length >= 5) return;
+  playNote(note.freq);
+  keyEl.classList.add('flash');
+  setTimeout(()=>keyEl.classList.remove('flash'), 600);
+  confirmedNotes.push(note.fr);
+  updateBubbles('confirm-display','c', confirmedNotes, 'confirm-count');
+  if(confirmedNotes.length === 5) {
+    const match = JSON.stringify(chosenNotes) === JSON.stringify(confirmedNotes);
+    if(match) {
+      markConfirmedCorrect();
+      document.getElementById('btn-register').disabled = false;
+    } else {
+      showError('Les séquences ne correspondent pas. Recommencez.');
+      setTimeout(resetConfirm, 1200);
+    }
+  }
+}
+
+function resetConfirm() {
+  confirmedNotes = [];
+  updateBubbles('confirm-display','c',[],'confirm-count');
+  document.getElementById('btn-register').disabled = true;
+  hideError();
+}
+function backToStep2() {
+  confirmedNotes=[]; chosenNotes=[];
+  document.getElementById('panel-confirm').style.display='none';
+  document.getElementById('panel-notes').style.display='block';
+  document.getElementById('step2').className='step active';
+  document.getElementById('step3').className='step';
+  resetNotes();
+}
+
+function markConfirmedCorrect() {
+  for(let i=0;i<5;i++) {
+    document.getElementById('c'+i).classList.add('correct');
+  }
+}
+
+// ── Submit ────────────────────────────────────────────────────
+async function submitRegister() {
+  const username = document.getElementById('username').value.trim();
+  const btn = document.getElementById('btn-register');
+  btn.disabled=true; btn.textContent='Création…';
+  try {
+    const res = await fetch('{% url "accounts:register" %}', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-CSRFToken':'{{ csrf_token }}'},
+      body:JSON.stringify({username, notes: chosenNotes})
+    });
+    const data = await res.json();
+    if(data.ok) {
+      btn.textContent='✅ Bienvenue !';
+      document.getElementById('step3').className='step done';
+      setTimeout(()=>window.location.href=data.redirect, 800);
+    } else {
+      showError(data.error);
+      btn.disabled=false; btn.textContent='Créer mon compte 🎵';
+    }
+  } catch(e) {
+    showError('Erreur réseau.'); btn.disabled=false; btn.textContent='Créer mon compte 🎵';
+  }
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+function updateBubbles(containerId, prefix, notes, countId) {
+  for(let i=0;i<5;i++) {
+    const b=document.getElementById(prefix+i);
+    if(notes[i]) {
+      b.textContent=notes[i].replace(/\d+$/,'');
+      b.classList.add('filled'); b.classList.remove('correct');
+    } else {
+      b.textContent='♩'; b.className='note-bubble';
+    }
+  }
+  document.getElementById(countId).textContent=notes.length;
+}
+function showError(msg) {
+  const el=document.getElementById('error-msg');
+  el.textContent=msg; el.classList.add('show');
+}
+function hideError() {
+  document.getElementById('error-msg').classList.remove('show');
+}
+
+// Enter key on username
+document.getElementById('username').addEventListener('keydown', e=>{
+  if(e.key==='Enter') goToStep2();
+});
+</script>
+</body>
+</html>

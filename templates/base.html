@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Teach Me Music{% endblock %}</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ════════════════════════════════════════════════
+       DESIGN SYSTEM — Teach Me Music
+       Palette: Deep navy + warm gold + cream
+       Aesthetic: Refined music conservatory
+    ════════════════════════════════════════════════ */
+    :root {
+      --navy:      #0f1b2d;
+      --navy-mid:  #1a2f4a;
+      --navy-soft: #243550;
+      --gold:      #c9a84c;
+      --gold-light:#e8c96a;
+      --gold-dim:  #7a6330;
+      --cream:     #f5f0e8;
+      --cream-dark:#e8e0d0;
+      --white:     #ffffff;
+      --green:     #2ecc71;
+      --red:       #e74c3c;
+      --text:      #f5f0e8;
+      --text-muted:#8a9bb5;
+      --radius:    12px;
+      --shadow:    0 8px 32px rgba(0,0,0,0.35);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle staff-line background pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 34px,
+        rgba(201,168,76,0.06) 34px,
+        rgba(201,168,76,0.06) 35px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Navigation ───────────────────────────────── */
+    nav {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 64px;
+      background: rgba(15,27,45,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-logo .clef { font-size: 1.6rem; }
+
+    .nav-links {
+      display: flex;
+      gap: 0.25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: all 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--gold);
+      background: rgba(201,168,76,0.1);
+    }
+
+    /* ── Page wrapper ─────────────────────────────── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ── Cards ────────────────────────────────────── */
+    .card {
+      background: var(--navy-mid);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    /* ── Buttons ──────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid rgba(138,155,181,0.3);
+    }
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .btn-danger {
+      background: rgba(231,76,60,0.15);
+      color: var(--red);
+      border: 1px solid rgba(231,76,60,0.3);
+    }
+    .btn-danger:hover { background: rgba(231,76,60,0.25); }
+
+    /* ── Section titles ───────────────────────────── */
+    h1, h2 {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* ── Badges ───────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .badge-gold  { background: rgba(201,168,76,0.15); color: var(--gold); }
+    .badge-green { background: rgba(46,204,113,0.15); color: var(--green); }
+    .badge-red   { background: rgba(231,76,60,0.15);  color: var(--red); }
+
+    /* ── Toast notifications ──────────────────────── */
+    #toast-container {
+      position: fixed;
+      top: 80px;
+      right: 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toast {
+      padding: 0.75rem 1.2rem;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      backdrop-filter: blur(12px);
+      animation: slideIn 0.3s ease, fadeOut 0.4s ease 2.6s forwards;
+      max-width: 320px;
+    }
+    .toast-success { background: rgba(46,204,113,0.2); border: 1px solid rgba(46,204,113,0.4); color: var(--green); }
+    .toast-error   { background: rgba(231,76,60,0.2);  border: 1px solid rgba(231,76,60,0.4);  color: var(--red); }
+    .toast-info    { background: rgba(201,168,76,0.2); border: 1px solid rgba(201,168,76,0.4); color: var(--gold); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateX(30px); }
+    }
+
+    /* ── Misc utilities ───────────────────────────── */
+    .text-gold   { color: var(--gold); }
+    .text-muted  { color: var(--text-muted); }
+    .text-green  { color: var(--green); }
+    .text-red    { color: var(--red); }
+    .text-center { text-align: center; }
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 1.5rem; }
+    .flex { display: flex; }
+    .flex-center { display: flex; align-items: center; justify-content: center; }
+    .gap-1 { gap: 0.5rem; }
+    .gap-2 { gap: 1rem; }
+
+    /* ── Responsive ───────────────────────────────── */
+    @media (max-width: 768px) {
+      .page { padding: 1rem 1rem 3rem; }
+      nav { padding: 0 1rem; }
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<nav>
+  <a href="{% url 'exercises:play' %}" class="nav-logo">
+    <span class="clef">𝄞</span> Teach Me Music
+  </a>
+  <ul class="nav-links">
+    <li><a href="{% url 'exercises:play' %}"      id="nav-play">🎹 Exercices</a></li>
+    <li><a href="{% url 'dashboard:dashboard' %}" id="nav-dash">📊 Progrès</a></li>
+    <li><a href="/admin/"                          id="nav-admin">⚙️ Admin</a></li>
+  </ul>
+</nav>
+
+<div id="toast-container"></div>
+
+<main class="page">
+  {% block content %}{% endblock %}
+</main>
+
+<script>
+  // ── Active nav link ──────────────────────────────
+  const path = window.location.pathname;
+  if (path.startsWith('/play') || path === '/') document.getElementById('nav-play').classList.add('active');
+  if (path.startsWith('/dashboard'))             document.getElementById('nav-dash').classList.add('active');
+
+  // ── Global toast helper ──────────────────────────
+  function showToast(message, type = 'info') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3200);
+  }
+
+  // ── CSRF helper ──────────────────────────────────
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+  }
+</script>
+
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,697 @@
+{% extends "base.html" %}
+{% block title %}Solfège — Teach Me Music{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0b0907; --surface:#151008; --surface2:#1d1610;
+  --border:rgba(210,175,100,0.18);
+  --gold:#d4aa50; --gold2:#f0cc78;
+  --ivory:#f5f0e2; --ivory-dim:#c8c0a8;
+  --green:#3ddc84; --red:#ff5a5a; --muted:#6b5e48;
+  --r:14px; --shadow:0 16px 48px rgba(0,0,0,0.6);
+}
+body {
+  font-family:'Outfit',sans-serif; background:var(--bg); color:var(--ivory);
+  min-height:100vh;
+  background-image:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(80,50,10,0.35) 0%,transparent 70%);
+}
+.app { width:100%; max-width:1600px; margin:0 auto; padding:1rem 1.5rem 3rem; display:flex; flex-direction:column; gap:0.6rem; }
+
+/* Header */
+.header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:0.2rem; }
+.header-title { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--gold); letter-spacing:0.04em; }
+.header-title span { font-style:italic; color:var(--gold2); }
+.stats-row { display:flex; gap:0.6rem; flex-wrap:wrap; }
+.stat { background:var(--surface2); border:1px solid var(--border); border-radius:999px; padding:0.3rem 1rem; font-size:0.8rem; color:var(--ivory-dim); display:flex; align-items:center; gap:0.4rem; text-decoration:none; }
+.stat strong { color:var(--gold); font-weight:700; font-size:1rem; }
+
+/* ── Selector bars ── */
+.selectors-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r);
+  padding:0.9rem 1.5rem; display:flex; flex-direction:column; gap:0.75rem;
+}
+.selector-row { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+.selector-label { font-size:0.68rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--muted); min-width:110px; white-space:nowrap; }
+.sel-btns { display:flex; gap:0.4rem; flex-wrap:wrap; }
+.sel-btn {
+  background:var(--surface2); border:1.5px solid var(--border); border-radius:8px;
+  color:var(--ivory-dim); font-family:'Outfit',sans-serif; font-size:0.82rem; font-weight:600;
+  padding:0.3rem 0.9rem; height:34px; cursor:pointer;
+  transition:border-color 0.2s,color 0.2s,background 0.2s;
+  display:flex; align-items:center; gap:0.35rem; white-space:nowrap;
+}
+.sel-btn:hover { border-color:var(--gold); color:var(--gold); }
+.sel-btn.active { border-color:var(--gold); background:rgba(212,170,80,0.12); color:var(--gold2); }
+.sel-divider { width:1px; height:20px; background:var(--border); }
+
+/* Mode selector row */
+.mode-row { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; padding-top:0.6rem; border-top:1px solid rgba(210,175,100,0.10); }
+.mode-btns { display:flex; gap:0.4rem; }
+.mode-btn {
+  background:var(--surface2); border:1.5px solid var(--border); border-radius:8px;
+  color:var(--ivory-dim); font-family:'Outfit',sans-serif; font-size:0.85rem; font-weight:600;
+  width:40px; height:34px; cursor:pointer;
+  transition:border-color 0.2s,color 0.2s,background 0.2s;
+  display:flex; align-items:center; justify-content:center;
+}
+.mode-btn:hover { border-color:var(--gold); color:var(--gold); }
+.mode-btn.active { border-color:var(--gold); background:rgba(212,170,80,0.12); color:var(--gold2); }
+.mode-info { font-size:0.75rem; color:var(--muted); }
+.mode-info strong { color:var(--gold2); }
+
+/* Score section */
+.score-section {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r) var(--r) 0 0; box-shadow:var(--shadow);
+  padding:1rem 1.5rem 1.2rem; display:flex; flex-direction:column; align-items:center; gap:0.7rem;
+  transition:border-color 0.4s,box-shadow 0.4s;
+}
+.score-section.state-correct { border-color:var(--green); box-shadow:0 0 60px rgba(61,220,132,0.12),var(--shadow); }
+.score-section.state-wrong   { border-color:var(--red);   box-shadow:0 0 60px rgba(255,90,90,0.12),var(--shadow); animation:shake 0.4s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-10px)} 60%{transform:translateX(10px)} }
+
+.feedback-row { width:100%; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; padding-bottom:0.7rem; border-bottom:1px solid rgba(210,175,100,0.10); }
+.feedback-msg { font-size:0.95rem; font-weight:500; min-height:1.3em; transition:color 0.3s; color:var(--muted); }
+.feedback-msg.correct { color:var(--green); }
+.feedback-msg.wrong   { color:var(--red); }
+.feedback-msg.thinking{ color:var(--gold); }
+.dot-spin { display:inline-block; animation:dotpulse 0.6s ease infinite alternate; }
+@keyframes dotpulse { from{opacity:0.3;transform:scale(0.8)} to{opacity:1;transform:scale(1.2)} }
+.progress-indicator { font-size:0.8rem; color:var(--muted); white-space:nowrap; }
+.progress-indicator strong { color:var(--gold2); font-size:1rem; }
+
+.confidence-bar-wrap { width:100%; background:rgba(255,255,255,0.05); border-radius:3px; height:4px; overflow:hidden; opacity:0; transition:opacity 0.3s; }
+.confidence-bar-wrap.show { opacity:1; }
+.confidence-bar { height:100%; border-radius:3px; width:0%; transition:width 0.55s ease,background 0.3s; }
+
+#vexflow-container {
+  width:100%; background:#f5f0e2; border-radius:10px;
+  display:flex; justify-content:center; align-items:center;
+  min-height:380px; overflow:hidden;
+}
+#vexflow-container svg { width:100% !important; height:auto !important; display:block; overflow:visible; }
+
+.score-stats { display:flex; gap:2.5rem; justify-content:center; flex-wrap:wrap; width:100%; padding-top:0.5rem; border-top:1px solid rgba(210,175,100,0.10); }
+.score-stat-item { text-align:center; }
+.score-stat-item .val { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--gold); line-height:1; }
+.score-stat-item .lbl { font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-top:0.15rem; }
+
+/* Piano section */
+.piano-section { background:var(--surface); border:1px solid var(--border); border-top:2px solid rgba(210,175,100,0.08); border-radius:0 0 var(--r) var(--r); box-shadow:var(--shadow); padding:1rem 1rem 1.5rem; position:relative; }
+.piano-section-label { font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:0.8rem; padding-left:0.5rem; }
+.piano-thinking-overlay { position:absolute; inset:0; background:rgba(11,9,7,0.7); border-radius:0 0 var(--r) var(--r); display:flex; align-items:center; justify-content:center; z-index:20; opacity:0; pointer-events:none; transition:opacity 0.2s; backdrop-filter:blur(3px); }
+.piano-thinking-overlay.show { opacity:1; pointer-events:all; }
+.spinner { width:44px; height:44px; border:3px solid rgba(210,175,100,0.15); border-top-color:var(--gold); border-radius:50%; animation:spin 0.75s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg);} }
+.spinner-label { margin-top:0.9rem; font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); }
+.piano-wrap { display:flex; flex-direction:column; align-items:center; overflow:visible; }
+.piano { position:relative; display:flex; user-select:none; filter:drop-shadow(0 12px 40px rgba(0,0,0,0.75)); }
+
+.key-w { position:relative; background:linear-gradient(180deg,#f6f1e3 0%,#e9e0cc 85%,#d8cebc 100%); border:1px solid #b0a080; border-bottom:5px solid #9a8a68; border-radius:0 0 9px 9px; cursor:pointer; flex-shrink:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding-bottom:10px; z-index:1; transition:background 0.07s,transform 0.07s,box-shadow 0.07s; box-shadow:inset 0 -4px 10px rgba(0,0,0,0.12),inset 1px 0 0 rgba(255,255,255,0.6),2px 0 0 rgba(0,0,0,0.06); }
+.key-w:hover:not(.disabled) { background:linear-gradient(180deg,#fffdf5 0%,#f5ecda 85%,#e5dbca 100%); }
+.key-w:active:not(.disabled),.key-w.pressed { background:linear-gradient(180deg,#ddd0b2 0%,#ccc0a0 100%); transform:translateY(4px) scaleY(0.985); box-shadow:inset 0 3px 6px rgba(0,0,0,0.18); }
+.key-w.flash-correct { background:linear-gradient(180deg,#b0f8d0 0%,#6ed898 100%) !important; border-color:var(--green) !important; box-shadow:0 0 28px rgba(61,220,132,0.55) !important; }
+.key-w.flash-wrong   { background:linear-gradient(180deg,#ffbaba 0%,#ff8a8a 100%) !important; border-color:var(--red) !important; box-shadow:0 0 28px rgba(255,90,90,0.55) !important; }
+
+/* Disabled keys */
+.key-w.disabled { background:linear-gradient(180deg,#2a2418 0%,#1e1a12 100%) !important; border-color:#1a1610 !important; box-shadow:none !important; cursor:not-allowed; opacity:0.45; }
+.key-w.disabled .key-label { color:#4a3a28; }
+.key-b.disabled { background:#0a0806 !important; border-color:#080604 !important; box-shadow:none !important; cursor:not-allowed; opacity:0.4; }
+
+.key-label { font-family:'Outfit',sans-serif; font-weight:700; color:#5a4530; text-align:center; line-height:1.25; pointer-events:none; }
+.key-b { position:absolute; background:linear-gradient(180deg,#221a0c 0%,#0e0b06 55%,#1c1408 100%); border:1px solid #080604; border-bottom:4px solid #000; border-radius:0 0 7px 7px; cursor:pointer; z-index:2; top:0; transition:background 0.07s,transform 0.07s; box-shadow:3px 6px 10px rgba(0,0,0,0.65),inset 0 1px 0 rgba(255,255,255,0.07); }
+.key-b:hover:not(.disabled) { background:linear-gradient(180deg,#302010 0%,#181008 55%,#281c0a 100%); }
+.key-b:active:not(.disabled),.key-b.pressed { background:linear-gradient(180deg,#0c0a06 0%,#070504 100%); transform:translateY(3px); }
+.key-b.flash-correct { background:linear-gradient(180deg,#1a9050 0%,#0d5030 100%) !important; border-color:var(--green) !important; box-shadow:0 0 18px rgba(61,220,132,0.55) !important; }
+.key-b.flash-wrong   { background:linear-gradient(180deg,#882222 0%,#501010 100%) !important; border-color:var(--red) !important; box-shadow:0 0 18px rgba(255,90,90,0.55) !important; }
+.key-w.octave-start::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:rgba(0,0,0,0.15); border-radius:0 0 0 9px; }
+.octave-labels { display:flex; margin-top:0.5rem; }
+.octave-label { font-size:0.65rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; text-align:center; padding-top:0.3rem; border-top:1px solid rgba(210,175,100,0.12); }
+.keyboard-hint { margin-top:0.75rem; text-align:center; font-size:0.7rem; color:var(--muted); letter-spacing:0.05em; }
+.labels-hidden .key-label { visibility:hidden; }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-title">𝄞 Teach Me <span>Music</span></div>
+    <div class="stats-row">
+      <div class="stat">🎯 <strong id="st-total">0</strong> exercices</div>
+      <div class="stat">✅ <strong id="st-ok">0</strong> corrects</div>
+      <div class="stat">📈 <strong id="st-rate">—</strong>%</div>
+      <div class="stat">🔥 série <strong id="st-streak">0</strong></div>
+      <a href="{% url 'dashboard:dashboard' %}" class="stat" style="border-color:rgba(210,175,100,0.4);color:var(--gold)">📊 Progrès</a>
+      <a href="{% url 'accounts:logout' %}" class="stat" style="border-color:rgba(255,90,90,0.3);color:#ff7a7a;" title="Se déconnecter">⏻ {{ request.user.username }}</a>
+      <button class="stat" id="mute-btn" onclick="toggleMute()" style="border-color:rgba(210,175,100,0.4);color:var(--gold);cursor:pointer;background:var(--surface2);" title="Couper / rétablir le son">🔊 Son</button>
+    </div>
+  </div>
+
+  <!-- SELECTORS CARD -->
+  <div class="selectors-card">
+
+    <!-- Note type -->
+    <div class="selector-row">
+      <span class="selector-label">🎵 Type de notes</span>
+      <div class="sel-btns" id="acc-btns">
+        <button class="sel-btn active" data-acc="natural">♩ Naturelles</button>
+        <button class="sel-btn" data-acc="sharp">♩ + Dièses ♯</button>
+        <button class="sel-btn" data-acc="flat">♩ + Bémols ♭</button>
+        <button class="sel-btn" data-acc="all">Toutes ♯♭</button>
+      </div>
+    </div>
+
+    <!-- Octave range -->
+    <div class="selector-row">
+      <span class="selector-label">🎹 Octaves</span>
+      <div class="sel-btns" id="oct-btns">
+        <button class="sel-btn" data-oct="1">1 octave &nbsp;<small style="opacity:0.6">DO4→SI4</small></button>
+        <button class="sel-btn active" data-oct="2">2 octaves <small style="opacity:0.6">DO4→DO6</small></button>
+        <button class="sel-btn" data-oct="3">3 octaves <small style="opacity:0.6">DO3→DO6</small></button>
+      </div>
+    </div>
+
+    <!-- Number of notes per exercise -->
+    <div class="mode-row">
+      <span class="selector-label">📝 Notes / exercice</span>
+      <div class="mode-btns" id="mode-btns">
+        <button class="mode-btn active" data-n="1">1</button>
+        <button class="mode-btn" data-n="2">2</button>
+        <button class="mode-btn" data-n="3">3</button>
+        <button class="mode-btn" data-n="4">4</button>
+        <button class="mode-btn" data-n="5">5</button>
+      </div>
+      <div class="mode-info" id="mode-info">Mode <strong>1 note</strong> — jouez la note affichée</div>
+    </div>
+
+  </div>
+
+  <!-- SCORE SECTION -->
+  <div class="score-section" id="score-section">
+    <div class="feedback-row">
+      <div class="feedback-msg" id="feedback-msg">Jouez la note indiquée ↓</div>
+      <div class="progress-indicator" id="progress-indicator"></div>
+    </div>
+    <div class="confidence-bar-wrap" id="conf-bar-wrap">
+      <div class="confidence-bar" id="conf-bar"></div>
+    </div>
+    <div id="vexflow-container"></div>
+    <div class="score-stats">
+      <div class="score-stat-item"><div class="val" id="st2-total">0</div><div class="lbl">Exercices</div></div>
+      <div class="score-stat-item"><div class="val" id="st2-ok">0</div><div class="lbl">Corrects</div></div>
+      <div class="score-stat-item"><div class="val" id="st2-streak">0</div><div class="lbl">Série</div></div>
+      <div class="score-stat-item"><div class="val" id="st2-rate">—</div><div class="lbl">% succès</div></div>
+    </div>
+  </div>
+
+  <!-- PIANO -->
+  <div class="piano-section" id="piano-section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;padding-left:0.5rem;">
+      <span class="piano-section-label" style="margin-bottom:0">Clavier Virtuel · DO3 → DO6 · 37 notes</span>
+      <button id="labels-btn" onclick="toggleLabels()" class="sel-btn" style="font-size:0.72rem;height:30px;padding:0 0.8rem;">🏷️ Noms visibles</button>
+    </div>
+    <div class="piano-thinking-overlay" id="thinking-overlay" style="display:none;">
+      <div style="text-align:center"><div class="spinner"></div><div class="spinner-label">Modèle ML…</div></div>
+    </div>
+    <div class="piano-wrap">
+      <div class="piano" id="piano"></div>
+      <div class="octave-labels" id="octave-labels"></div>
+    </div>
+    <div class="keyboard-hint">💡 Raccourcis clavier : A=DO4 · S=RE4 · D=MI4 · F=FA4 · G=SOL4 · H=LA4 · J=SI4 · K=DO5 …</div>
+  </div>
+
+</div>
+{% endblock %}
+
+
+{% block extra_scripts %}
+<script>
+'use strict';
+
+const URL_RECOGNIZE = "{% url 'recognition:recognize_audio' %}";
+const URL_NEXT_NOTE = "{% url 'exercises:next_note' %}";
+const URL_SUBMIT    = "{% url 'exercises:submit' %}";
+const CSRF          = "{{ csrf_token }}";
+
+const NOTES = [
+  {fr:'DO3',  freq:130.81, white:true,  oct:3}, {fr:'DO#3', freq:138.59, white:false, oct:3},
+  {fr:'RE3',  freq:146.83, white:true,  oct:3}, {fr:'RE#3', freq:155.56, white:false, oct:3},
+  {fr:'MI3',  freq:164.81, white:true,  oct:3}, {fr:'FA3',  freq:174.61, white:true,  oct:3},
+  {fr:'FA#3', freq:185.00, white:false, oct:3}, {fr:'SOL3', freq:196.00, white:true,  oct:3},
+  {fr:'SOL#3',freq:207.65, white:false, oct:3}, {fr:'LA3',  freq:220.00, white:true,  oct:3},
+  {fr:'LA#3', freq:233.08, white:false, oct:3}, {fr:'SI3',  freq:246.94, white:true,  oct:3},
+  {fr:'DO4',  freq:261.63, white:true,  oct:4}, {fr:'DO#4', freq:277.18, white:false, oct:4},
+  {fr:'RE4',  freq:293.66, white:true,  oct:4}, {fr:'RE#4', freq:311.13, white:false, oct:4},
+  {fr:'MI4',  freq:329.63, white:true,  oct:4}, {fr:'FA4',  freq:349.23, white:true,  oct:4},
+  {fr:'FA#4', freq:369.99, white:false, oct:4}, {fr:'SOL4', freq:392.00, white:true,  oct:4},
+  {fr:'SOL#4',freq:415.30, white:false, oct:4}, {fr:'LA4',  freq:440.00, white:true,  oct:4},
+  {fr:'LA#4', freq:466.16, white:false, oct:4}, {fr:'SI4',  freq:493.88, white:true,  oct:4},
+  {fr:'DO5',  freq:523.25, white:true,  oct:5}, {fr:'DO#5', freq:554.37, white:false, oct:5},
+  {fr:'RE5',  freq:587.33, white:true,  oct:5}, {fr:'RE#5', freq:622.25, white:false, oct:5},
+  {fr:'MI5',  freq:659.25, white:true,  oct:5}, {fr:'FA5',  freq:698.46, white:true,  oct:5},
+  {fr:'FA#5', freq:739.99, white:false, oct:5}, {fr:'SOL5', freq:783.99, white:true,  oct:5},
+  {fr:'SOL#5',freq:830.61, white:false, oct:5}, {fr:'LA5',  freq:880.00, white:true,  oct:5},
+  {fr:'LA#5', freq:932.33, white:false, oct:5}, {fr:'SI5',  freq:987.77, white:true,  oct:5},
+  {fr:'DO6',  freq:1046.50,white:true,  oct:6},
+];
+const NOTE_MAP = Object.fromEntries(NOTES.map(n=>[n.fr,n]));
+
+// VexFlow pitch map
+// For flat notes: use the NATURAL note letter (so VexFlow places it on the correct staff line)
+// The flat accidental symbol is added separately by the hasFlat check below
+const FR_TO_EN = {
+  'DO':'c','DO#':'c#','RE':'d','RE#':'d#','MI':'e',
+  'FA':'f','FA#':'f#','SOL':'g','SOL#':'g#','LA':'a','LA#':'a#','SI':'b',
+  // Flat display names -> natural letter (VexFlow places on correct line, we add 'b' accidental)
+  'REb':'d','MIb':'e','SOLb':'g','LAb':'a','SIb':'b',
+};
+// Sharp name -> flat display name
+const SHARP_TO_FLAT_NAME = {'DO#':'REb','RE#':'MIb','FA#':'SOLb','SOL#':'LAb','LA#':'SIb'};
+// Only these 5 sharps have flat equivalents that are BLACK keys.
+// FAb=MI and DOb=SI are WHITE keys — never used as flat exercises.
+
+function makeDisplayNote(modelFr) {
+  const base = NOTE_MAP[modelFr];
+  if(!base) return {...NOTE_MAP['DO4'], displayFr:'DO4', modelFr:'DO4'};
+  if(accFilter === 'flat') {
+    const m = modelFr.match(/^([A-Z#]+)(\d+)$/);
+    // ONLY convert if it's a sharp (black key) — white keys keep their natural name
+    if(m && m[1].includes('#') && SHARP_TO_FLAT_NAME[m[1]]) {
+      return {...base, displayFr: SHARP_TO_FLAT_NAME[m[1]] + m[2], modelFr};
+    }
+  }
+  return {...base, displayFr: base.fr, modelFr: base.fr};
+}
+
+// ── Filter state ──────────────────────────────────────────────
+let accFilter = 'natural';   // 'natural' | 'sharp' | 'flat' | 'all'
+let octFilter = '2';         // '1' | '2' | '3'
+let numNotes  = 1;
+
+// ── Sequence state ────────────────────────────────────────────
+let seqNotes   = [];
+let seqIdx     = 0;
+let noteColors = [];
+let busy       = false;
+let totalEx=0, totalOk=0, streak=0, noteStart=0;
+let audioCtx   = null;
+let isMuted    = false;
+
+// ── Compute allowed note set from current filters ─────────────
+function getAllowedNotes() {
+  const octRanges = {
+    '1': n => n.oct === 4 && n.fr !== 'DO5',   // DO4–SI4 (no DO5 as it belongs to octave 5 range)
+    '2': n => (n.oct === 4 || n.oct === 5 || n.fr === 'DO6'),
+    '3': n => true,
+  };
+  // Octave 1: DO4 to SI4
+  const octMap = {
+    '1': n => n.oct === 4 && !n.fr.startsWith('DO5'),
+    '2': n => n.oct >= 4,
+    '3': n => true,
+  };
+  const accMap = {
+    'natural': n => !n.fr.includes('#'),
+    'sharp':   n => true,          // natural + sharps
+    'flat':    n => true,          // flat MODE = natural + sharps (sharps ARE the flat keys!)
+    'all':     n => true,          // everything
+  };
+  return NOTES
+    .filter(octMap[octFilter] || (()=>true))
+    .filter(accMap[accFilter] || (()=>true))
+    .map(n => n.fr);
+}
+
+// ── Disable/enable piano keys based on filters ────────────────
+function updatePianoDisabled() {
+  const allowed = new Set(getAllowedNotes());
+  NOTES.forEach(note => {
+    const el = document.querySelector(`[data-note="${note.fr}"]`);
+    if(!el) return;
+    if(allowed.has(note.fr)) {
+      el.classList.remove('disabled');
+    } else {
+      el.classList.add('disabled');
+    }
+  });
+}
+
+// ── Selector event listeners ──────────────────────────────────
+document.getElementById('acc-btns').addEventListener('click', e => {
+  const btn = e.target.closest('.sel-btn');
+  if(!btn || busy) return;
+  document.querySelectorAll('#acc-btns .sel-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  accFilter = btn.dataset.acc;
+  updatePianoDisabled();
+  loadSequence();
+});
+
+document.getElementById('oct-btns').addEventListener('click', e => {
+  const btn = e.target.closest('.sel-btn');
+  if(!btn || busy) return;
+  document.querySelectorAll('#oct-btns .sel-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  octFilter = btn.dataset.oct;
+  updatePianoDisabled();
+  loadSequence();
+});
+
+document.getElementById('mode-btns').addEventListener('click', e => {
+  const btn = e.target.closest('.mode-btn');
+  if(!btn || busy) return;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  numNotes = parseInt(btn.dataset.n);
+  const labels={1:'1 note',2:'2 notes',3:'3 notes',4:'4 notes',5:'5 notes'};
+  const desc={1:'jouez la note affichée',2:'jouez les 2 notes dans l\'ordre',3:'jouez les 3 notes dans l\'ordre',4:'jouez les 4 notes dans l\'ordre',5:'jouez les 5 notes dans l\'ordre'};
+  document.getElementById('mode-info').innerHTML=`Mode <strong>${labels[numNotes]}</strong> — ${desc[numNotes]}`;
+  loadSequence();
+});
+
+// ── Audio ─────────────────────────────────────────────────────
+function toggleMute() {
+  isMuted = !isMuted;
+  const btn = document.getElementById('mute-btn');
+  if(isMuted) {
+    btn.innerHTML = '🔇 Muet';
+    btn.style.color = 'var(--red)';
+    btn.style.borderColor = 'rgba(255,90,90,0.5)';
+  } else {
+    btn.innerHTML = '🔊 Son';
+    btn.style.color = 'var(--gold)';
+    btn.style.borderColor = 'rgba(210,175,100,0.4)';
+  }
+}
+
+function getCtx(){
+  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)({sampleRate:22050});
+  return audioCtx;
+}
+function playNote(freq,dur=1.8){
+  if(isMuted) return;
+  const ctx=getCtx(); if(ctx.state==='suspended') ctx.resume();
+  const master=ctx.createGain();
+  master.gain.setValueAtTime(0,ctx.currentTime);
+  master.gain.linearRampToValueAtTime(0.65,ctx.currentTime+0.015);
+  master.gain.linearRampToValueAtTime(0.42,ctx.currentTime+0.12);
+  master.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+  master.connect(ctx.destination);
+  [[1,1],[2,.5],[3,.28],[4,.14],[5,.07],[6,.04],[7,.02]].forEach(([h,g])=>{
+    const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=freq*h;
+    const gn=ctx.createGain(); gn.gain.value=g;
+    o.connect(gn); gn.connect(master); o.start(ctx.currentTime); o.stop(ctx.currentTime+dur);
+  });
+}
+async function renderToWav(freq,dur=1.8){
+  const SR=22050, offCtx=new OfflineAudioContext(1,Math.ceil(SR*dur),SR);
+  const master=offCtx.createGain();
+  master.gain.setValueAtTime(0,0); master.gain.linearRampToValueAtTime(0.65,0.015);
+  master.gain.linearRampToValueAtTime(0.42,0.12); master.gain.exponentialRampToValueAtTime(0.001,dur);
+  master.connect(offCtx.destination);
+  [[1,1],[2,.5],[3,.28],[4,.14],[5,.07],[6,.04],[7,.02]].forEach(([h,g])=>{
+    const o=offCtx.createOscillator(); o.type='sine'; o.frequency.value=freq*h;
+    const gn=offCtx.createGain(); gn.gain.value=g;
+    o.connect(gn); gn.connect(master); o.start(0); o.stop(dur);
+  });
+  const buf=await offCtx.startRendering(), smp=buf.getChannelData(0);
+  const dL=smp.length*2, ab=new ArrayBuffer(44+dL), v=new DataView(ab);
+  const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  ws(0,'RIFF'); v.setUint32(4,36+dL,true); ws(8,'WAVE'); ws(12,'fmt ');
+  v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,SR,true); v.setUint32(28,SR*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
+  ws(36,'data'); v.setUint32(40,dL,true);
+  let off=44; for(let i=0;i<smp.length;i++){ const s=Math.max(-1,Math.min(1,smp[i])); v.setInt16(off,s<0?s*0x8000:s*0x7FFF,true); off+=2; }
+  return new Blob([ab],{type:'audio/wav'});
+}
+async function callModel(wavBlob){
+  const fd=new FormData(); fd.append('audio',wavBlob,'note.wav');
+  const res=await fetch(URL_RECOGNIZE,{method:'POST',body:fd,headers:{'X-CSRFToken':CSRF}});
+  if(!res.ok) throw new Error(`HTTP ${res.status}`); return res.json();
+}
+
+// ── Sequence ──────────────────────────────────────────────────
+async function fetchOneNote(){
+  // Server always works with sharps; flats are display-only client-side
+  // For 'flat': request sharp from server, display as flat
+  // For 'all': randomly decide to display as flat or sharp (50/50 for accidentals)
+  let serverAcc = accFilter;
+  let displayAsFlat = false;
+  if(accFilter === 'flat') {
+    serverAcc = 'sharp';
+    displayAsFlat = true;
+  } else if(accFilter === 'all') {
+    serverAcc = 'sharp';  // get a sharp/natural note
+    displayAsFlat = Math.random() < 0.5;  // 50% chance to display as flat
+  }
+  const params = new URLSearchParams({octave: octFilter, accidentals: serverAcc});
+  const res=await fetch(`${URL_NEXT_NOTE}?${params}`);
+  const data=await res.json();
+  // Temporarily override accFilter for makeDisplayNote
+  const savedAcc = accFilter;
+  if(displayAsFlat) accFilter = 'flat';
+  const note = makeDisplayNote(data.note_label);
+  accFilter = savedAcc;
+  // If the note has no flat equivalent (natural note), keep as-is
+  return note;
+}
+async function loadSequence(){
+  busy=true; seqNotes=[]; seqIdx=0; noteColors=[];
+  for(let i=0;i<numNotes;i++){
+    const note=await fetchOneNote(); seqNotes.push(note); noteColors.push('default');
+  }
+  renderStaff();
+  updateProgressIndicator();
+  setMsg('Jouez la note indiquée ↓','');
+  document.getElementById('score-section').className='score-section';
+  document.getElementById('conf-bar-wrap').classList.remove('show');
+  noteStart=Date.now();
+  busy=false;
+}
+
+// ── VexFlow ───────────────────────────────────────────────────
+function noteToVexKey(fr){
+  // Handle flat names like 'REb4', 'SIb5' as well as sharps
+  const m=fr.match(/^([A-Za-z#b]+?)(\d+)$/); if(!m) return 'c/4';
+  return `${FR_TO_EN[m[1]]||'c'}/${m[2]}`;
+}
+function renderStaff(_retry){
+  if(_retry===undefined) _retry=0;
+  const {Renderer,Stave,StaveNote,Voice,Formatter,Accidental}=Vex.Flow;
+  const container=document.getElementById('vexflow-container');
+  container.innerHTML='';
+  const SCALE=2.6, W=1400, H=480;
+  try {
+    const renderer=new Renderer(container,Renderer.Backends.SVG);
+    renderer.resize(W,H);
+    const svg=container.querySelector('svg');
+    if(svg){svg.style.width='100%';svg.style.height='auto';svg.style.display='block';}
+    const ctx=renderer.getContext();
+    ctx.scale(SCALE,SCALE);
+    const lW=W/SCALE, lH=H/SCALE;
+    const staveY=lH*0.28;
+    const stave=new Stave(10,staveY,lW-20);
+    stave.addClef('treble');
+    stave.setStyle({strokeStyle:'#4a3a20',fillStyle:'#4a3a20'});
+    stave.setContext(ctx).draw();
+
+    const staveNotes=seqNotes.map((note,i)=>{
+      const disp = note.displayFr || note.fr;
+      const vexKey=noteToVexKey(disp);
+      const hasSharp = disp.includes('#');
+      const hasFlat  = /^[A-Z]+b\d/.test(disp); // e.g. REb4, SIb5, MIb3
+      const sn=new StaveNote({keys:[vexKey],duration:'q',clef:'treble'});
+      if(hasSharp) sn.addModifier(new Accidental('#'));
+      if(hasFlat)  sn.addModifier(new Accidental('b'));
+
+
+      let color;
+      if(noteColors[i]==='correct')    color='#1a7a40';
+      else if(noteColors[i]==='wrong') color='#cc2020';
+      else if(i===seqIdx)              color='#1a1208';
+      else                             color='#a09080';
+      sn.setStyle({fillStyle:color,strokeStyle:color});
+      return sn;
+    });
+
+    const voice=new Voice({numBeats:seqNotes.length,beatValue:4});
+    voice.setStrict(false);
+    voice.addTickables(staveNotes);
+    new Formatter().joinVoices([voice]).format([voice],lW-80);
+    voice.draw(ctx,stave);
+
+    // Gold arrow above active note
+    if(seqIdx<seqNotes.length){
+      try{
+        const bb=staveNotes[seqIdx].getBoundingBox();
+        const ax=bb.x+bb.w/2, ay=staveY-22;
+        ctx.save();
+        ctx.setFillStyle('#d4aa50'); ctx.setStrokeStyle('#d4aa50');
+        ctx.beginPath();
+        ctx.moveTo(ax,ay+12); ctx.lineTo(ax-8,ay); ctx.lineTo(ax+8,ay);
+        ctx.closePath(); ctx.fill(); ctx.restore();
+      }catch(e){}
+    }
+  } catch(err){
+    if(_retry<5) requestAnimationFrame(()=>renderStaff(_retry+1));
+  }
+}
+
+// ── Key click ─────────────────────────────────────────────────
+async function handleKey(noteObj, keyEl){
+  if(busy || keyEl.classList.contains('disabled')) return;
+  busy=true;
+  const targetNote=seqNotes[seqIdx]; if(!targetNote){busy=false;return;}
+  playNote(noteObj.freq);
+  keyEl.classList.add('pressed');
+  setTimeout(()=>keyEl.classList.remove('pressed'),160);
+  setMsg('<span class="dot-spin">●</span> Reconnaissance…','thinking');
+  try {
+    const wav=await renderToWav(noteObj.freq);
+    const result=await callModel(wav);
+    const predicted=result.note, confidence=result.confidence;
+    const correct=(predicted===targetNote.modelFr);
+    const responseMs=Date.now()-noteStart;
+    const pct=Math.round(confidence*100);
+    document.getElementById('conf-bar').style.width=pct+'%';
+    document.getElementById('conf-bar').style.background=correct?'var(--green)':'var(--red)';
+    document.getElementById('conf-bar-wrap').classList.add('show');
+    const cls=correct?'flash-correct':'flash-wrong';
+    keyEl.classList.add(cls);
+    setTimeout(()=>keyEl.classList.remove(cls),correct?1400:650);
+    saveResult(targetNote.modelFr,predicted,correct,confidence,responseMs);
+    if(correct){
+      noteColors[seqIdx]='correct'; totalOk++; streak++; totalEx++;
+      updateStats(); seqIdx++;
+      renderStaff(); updateProgressIndicator();
+      if(seqIdx>=numNotes){
+        document.getElementById('score-section').className='score-section state-correct';
+        const tag=result.demo_mode?' [démo]':'';
+        setMsg(`🎉 ${numNotes>1?'Séquence complète !':'Bravo !'} Confiance : ${pct}%${tag}`,'correct');
+        setTimeout(loadSequence,1800);
+      } else {
+        const tag=result.demo_mode?' [démo]':'';
+        setMsg(`✅ Note ${seqIdx}/${numNotes} — jouez la suivante !${tag}`,'correct');
+        noteStart=Date.now(); busy=false;
+      }
+    } else {
+      noteColors[seqIdx]='wrong';
+      renderStaff();
+      document.getElementById('score-section').className='score-section state-wrong';
+      streak=0; totalEx++; updateStats();
+      setMsg('❌ Mauvaise note — réessayez !','wrong');
+      setTimeout(()=>{
+        noteColors[seqIdx]='default'; renderStaff();
+        document.getElementById('score-section').className='score-section';
+        busy=false;
+      },900);
+    }
+  } catch(err){
+    console.error('ML error:',err);
+    setMsg('❌ Erreur de connexion au modèle','wrong');
+    busy=false;
+  }
+}
+
+function setMsg(text,type){ const el=document.getElementById('feedback-msg'); el.innerHTML=text; el.className=`feedback-msg ${type}`; }
+function updateStats(){
+  const rate=totalEx>0?Math.round(totalOk/totalEx*100):'—';
+  ['','2'].forEach(sfx=>{
+    document.getElementById(`st${sfx}-total`).textContent=totalEx;
+    document.getElementById(`st${sfx}-ok`).textContent=totalOk;
+    document.getElementById(`st${sfx}-rate`).textContent=rate;
+    document.getElementById(`st${sfx}-streak`).textContent=streak;
+  });
+}
+function updateProgressIndicator(){
+  const el=document.getElementById('progress-indicator');
+  if(numNotes===1){el.innerHTML='';return;}
+  el.innerHTML=`Note <strong>${Math.min(seqIdx+1,numNotes)}</strong> / ${numNotes}`;
+}
+async function saveResult(displayed,answered,correct,confidence,ms){
+  try{ await fetch(URL_SUBMIT,{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':CSRF},body:JSON.stringify({note_displayed:displayed,note_answered:answered,correct,confidence,attempts:1,response_time_ms:ms})}); }catch(e){}
+}
+
+// ── Toggle key labels ────────────────────────────────────────
+let labelsVisible = true;
+function toggleLabels() {
+  labelsVisible = !labelsVisible;
+  const piano = document.getElementById('piano');
+  const btn   = document.getElementById('labels-btn');
+  if(labelsVisible) {
+    piano.classList.remove('labels-hidden');
+    btn.innerHTML = '🏷️ Noms visibles';
+    btn.classList.add('active');
+  } else {
+    piano.classList.add('labels-hidden');
+    btn.innerHTML = '🙈 Noms cachés';
+    btn.classList.remove('active');
+  }
+}
+
+// ── Piano builder ─────────────────────────────────────────────
+function buildPiano(){
+  const pianoEl=document.getElementById('piano'), labelsEl=document.getElementById('octave-labels');
+  const containerW=pianoEl.parentElement.offsetWidth||window.innerWidth-60;
+  const whiteCount=NOTES.filter(n=>n.white).length;
+  const W_KEY=Math.floor(containerW*0.99/whiteCount);
+  const H_WHITE=Math.round(W_KEY*6.5), W_BLACK=Math.round(W_KEY*0.62), H_BLACK=Math.round(H_WHITE*0.62);
+  const FONT_SZ=Math.max(8,Math.round(W_KEY*0.28));
+  pianoEl.style.width=(whiteCount*W_KEY)+'px'; pianoEl.style.height=H_WHITE+'px';
+  NOTES.filter(n=>n.white).forEach(note=>{
+    const el=document.createElement('div');
+    el.className='key-w'; el.dataset.note=note.fr; el.title=note.fr;
+    el.style.width=W_KEY+'px'; el.style.height=H_WHITE+'px';
+    if(note.fr.match(/^DO\d/)) el.classList.add('octave-start');
+    const lbl=document.createElement('span');
+    lbl.className='key-label'; lbl.style.fontSize=FONT_SZ+'px';
+    lbl.innerHTML=note.fr.replace(/(\d+)$/,'<br>$1');
+    el.appendChild(lbl);
+    el.addEventListener('mousedown',e=>{e.preventDefault();handleKey(note,el);});
+    el.addEventListener('touchstart',e=>{e.preventDefault();handleKey(note,el);},{passive:false});
+    pianoEl.appendChild(el);
+  });
+  let wIdx=-1;
+  NOTES.forEach(note=>{
+    if(note.white){wIdx++;return;}
+    const el=document.createElement('div');
+    el.className='key-b'; el.dataset.note=note.fr; el.title=note.fr;
+    el.style.width=W_BLACK+'px'; el.style.height=H_BLACK+'px';
+    el.style.left=(wIdx*W_KEY+W_KEY-W_BLACK/2)+'px';
+    el.addEventListener('mousedown',e=>{e.preventDefault();handleKey(note,el);});
+    el.addEventListener('touchstart',e=>{e.preventDefault();handleKey(note,el);},{passive:false});
+    pianoEl.appendChild(el);
+  });
+  const octaveWhites={3:7,4:7,5:7,6:1};
+  Object.entries(octaveWhites).forEach(([oct,count])=>{
+    const el=document.createElement('div');
+    el.className='octave-label'; el.style.width=(count*W_KEY)+'px'; el.textContent=`Octave ${oct}`;
+    labelsEl.appendChild(el);
+  });
+  labelsEl.style.width=(whiteCount*W_KEY)+'px';
+  updatePianoDisabled();
+}
+
+// ── Keyboard shortcuts ────────────────────────────────────────
+const KB={'a':'DO4','w':'DO#4','s':'RE4','e':'RE#4','d':'MI4','f':'FA4','t':'FA#4','g':'SOL4','y':'SOL#4','h':'LA4','u':'LA#4','j':'SI4','k':'DO5','o':'DO#5','l':'RE5','p':'RE#5',';':'MI5'};
+document.addEventListener('keydown',e=>{
+  if(e.repeat||e.ctrlKey||e.metaKey) return;
+  const fr=KB[e.key]; if(!fr) return;
+  const note=NOTE_MAP[fr], el=document.querySelector(`[data-note="${fr}"]`);
+  if(note&&el&&!el.classList.contains('disabled')) handleKey(note,el);
+});
+
+// ── Init ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  buildPiano();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>loadSequence()));
+});
+</script>
+{% endblock %}

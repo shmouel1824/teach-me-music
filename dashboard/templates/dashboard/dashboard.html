@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord — Teach Me Music{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #0b0907; --surface: #151008; --surface2: #1d1610;
+  --border:  rgba(210,175,100,0.18);
+  --gold:    #d4aa50; --gold2: #f0cc78;
+  --ivory:   #f5f0e2; --ivory-dim: #c8c0a8;
+  --green:   #3ddc84; --red: #ff5a5a; --yellow: #f0cc78;
+  --muted:   #6b5e48; --r: 14px;
+  --shadow:  0 16px 48px rgba(0,0,0,0.6);
+}
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--ivory);
+  min-height: 100vh;
+  background-image: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(80,50,10,0.35) 0%, transparent 70%);
+}
+.app { max-width: 1400px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+/* Header */
+.header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.header-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; color: var(--gold); letter-spacing: 0.04em; }
+.header-title span { font-style: italic; color: var(--gold2); }
+.btn {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 999px; padding: 0.4rem 1.2rem;
+  font-size: 0.8rem; color: var(--ivory-dim); cursor: pointer;
+  transition: border-color 0.2s, color 0.2s; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+}
+.btn:hover { border-color: var(--gold); color: var(--gold); }
+.btn-danger:hover { border-color: var(--red); color: var(--red); }
+
+/* KPI row */
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.kpi-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); box-shadow: var(--shadow);
+  padding: 1.4rem 1.6rem;
+}
+.kpi-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+.kpi-val { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 600; color: var(--gold); line-height: 1; }
+.kpi-sub { font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
+
+/* Section card */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); box-shadow: var(--shadow);
+  padding: 1.5rem 1.8rem;
+}
+.card-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.3rem;
+  font-weight: 600; color: var(--gold); margin-bottom: 1.2rem;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+
+/* Note grid */
+.note-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.6rem; }
+.note-chip {
+  border-radius: 8px; padding: 0.6rem 0.5rem;
+  text-align: center; position: relative; overflow: hidden;
+  border: 1px solid transparent;
+}
+.note-chip .note-label { font-weight: 700; font-size: 0.9rem; display: block; margin-bottom: 0.3rem; }
+.note-chip .note-pct   { font-size: 1.3rem; font-family: 'Cormorant Garamond', serif; font-weight: 600; display: block; }
+.note-chip .note-tries { font-size: 0.65rem; color: var(--muted); display: block; margin-top: 0.15rem; }
+.note-chip .note-bar   { height: 3px; border-radius: 2px; margin-top: 0.4rem; }
+
+.note-chip.mastered  { background: rgba(61,220,132,0.08);  border-color: rgba(61,220,132,0.3);  }
+.note-chip.mastered  .note-pct { color: var(--green); }
+.note-chip.mastered  .note-bar { background: var(--green); }
+
+.note-chip.weak      { background: rgba(255,90,90,0.08);   border-color: rgba(255,90,90,0.3);   }
+.note-chip.weak      .note-pct { color: var(--red); }
+.note-chip.weak      .note-bar { background: var(--red); }
+
+.note-chip.learning  { background: rgba(240,204,120,0.07); border-color: rgba(240,204,120,0.2); }
+.note-chip.learning  .note-pct { color: var(--yellow); }
+.note-chip.learning  .note-bar { background: var(--yellow); }
+
+.note-chip.unseen    { background: rgba(107,94,72,0.1);    border-color: rgba(107,94,72,0.2);   }
+.note-chip.unseen    .note-pct { color: var(--muted); }
+.note-chip.unseen    .note-bar { background: var(--muted); }
+
+/* Progress bar for each note */
+.bar-wrap { background: rgba(255,255,255,0.06); border-radius: 3px; height: 6px; overflow: hidden; margin-top: 0.5rem; }
+.bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+
+/* Weak / strong lists */
+.focus-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.focus-item {
+  display: flex; align-items: center; gap: 1rem;
+  background: var(--surface2); border-radius: 8px; padding: 0.7rem 1rem;
+  border: 1px solid var(--border);
+}
+.focus-note { font-weight: 700; font-size: 1rem; min-width: 64px; color: var(--ivory); }
+.focus-bar-wrap { flex: 1; background: rgba(255,255,255,0.05); border-radius: 3px; height: 8px; overflow: hidden; }
+.focus-bar { height: 100%; border-radius: 3px; }
+.focus-pct { min-width: 46px; text-align: right; font-weight: 600; font-size: 0.9rem; }
+.focus-tries { min-width: 52px; text-align: right; font-size: 0.75rem; color: var(--muted); }
+
+/* Legend */
+.legend { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: var(--muted); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+/* Spinner */
+.spinner-wrap { text-align: center; padding: 3rem; color: var(--muted); }
+.spin { width: 36px; height: 36px; border: 3px solid rgba(210,175,100,0.15); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.75s linear infinite; margin: 0 auto 1rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Two-col layout */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } .kpi-row { grid-template-columns: repeat(2,1fr); } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-title">𝄞 Teach Me <span>Music</span> — Progrès</div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;align-items:center;">
+      <a href="{% url 'exercises:play' %}" class="btn">🎹 Retour aux exercices</a>
+      <button class="btn btn-danger" id="btn-reset-bandit" onclick="resetBandit()">🔄 Réinitialiser l'apprentissage</button>
+    </div>
+  </div>
+
+  <!-- KPI CARDS — filled by JS -->
+  <div class="kpi-row" id="kpi-row">
+    <div class="kpi-card"><div class="kpi-label">Exercices total</div><div class="kpi-val" id="kpi-total">—</div></div>
+    <div class="kpi-card"><div class="kpi-label">Taux de succès global</div><div class="kpi-val" id="kpi-rate">—</div><div class="kpi-sub">sur tous les exercices</div></div>
+    <div class="kpi-card"><div class="kpi-label">Notes maîtrisées</div><div class="kpi-val" id="kpi-mastered">—</div><div class="kpi-sub" id="kpi-mastered-sub">≥ 80% de succès</div></div>
+    <div class="kpi-card"><div class="kpi-label">Notes à travailler</div><div class="kpi-val" id="kpi-weak">—</div><div class="kpi-sub">< 65% de succès</div></div>
+  </div>
+
+  <!-- WEAK + STRONG side by side -->
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">⚠️ Notes à renforcer</div>
+      <div class="focus-list" id="weak-list">
+        <div class="spinner-wrap"><div class="spin"></div>Chargement…</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">✅ Notes maîtrisées</div>
+      <div class="focus-list" id="strong-list">
+        <div class="spinner-wrap"><div class="spin"></div>Chargement…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALL NOTES GRID -->
+  <div class="card">
+    <div class="card-title">🎹 Toutes les notes — DO3 → DO6</div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Maîtrisé (≥80%)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div> En apprentissage (65–79%)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> À travailler (&lt;65%)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--muted)"></div> Pas encore vu</div>
+    </div>
+    <div class="note-grid" id="note-grid">
+      <div class="spinner-wrap" style="grid-column:1/-1"><div class="spin"></div>Chargement…</div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const URL_BANDIT_STATS = "{% url 'exercises:bandit_stats' %}";
+const URL_RESET_BANDIT = "{% url 'exercises:reset_bandit' %}";
+const CSRF = "{{ csrf_token }}";
+
+async function loadStats() {
+  try {
+    const res  = await fetch(URL_BANDIT_STATS);
+    const data = await res.json();
+    renderDashboard(data);
+  } catch(e) {
+    console.error('Failed to load bandit stats:', e);
+  }
+}
+
+function renderDashboard(data) {
+  // KPIs
+  const total    = data.total_exercises;
+  const rate     = Math.round(data.overall_rate * 100);
+  const mastered = data.all_stats.filter(n => n.status === 'mastered').length;
+  const weak     = data.all_stats.filter(n => n.status === 'weak').length;
+
+  document.getElementById('kpi-total').textContent    = total || '0';
+  document.getElementById('kpi-rate').textContent     = total ? rate + '%' : '—';
+  document.getElementById('kpi-mastered').textContent = mastered;
+  document.getElementById('kpi-weak').textContent     = weak;
+
+  // Weak notes list
+  const weakEl = document.getElementById('weak-list');
+  if(data.weak_notes.length === 0){
+    weakEl.innerHTML = '<p style="color:var(--muted);text-align:center;padding:1rem">Aucune note faible détectée encore — continuez les exercices !</p>';
+  } else {
+    weakEl.innerHTML = data.weak_notes.map(n => `
+      <div class="focus-item">
+        <span class="focus-note">${n.note}</span>
+        <div class="focus-bar-wrap">
+          <div class="focus-bar" style="width:${n.pct}%;background:var(--red)"></div>
+        </div>
+        <span class="focus-pct" style="color:var(--red)">${n.pct}%</span>
+        <span class="focus-tries">${n.attempts} essai${n.attempts>1?'s':''}</span>
+      </div>
+    `).join('');
+  }
+
+  // Strong notes list
+  const strongEl = document.getElementById('strong-list');
+  if(data.strong_notes.length === 0){
+    strongEl.innerHTML = '<p style="color:var(--muted);text-align:center;padding:1rem">Continuez les exercices pour voir vos notes maîtrisées !</p>';
+  } else {
+    strongEl.innerHTML = data.strong_notes.map(n => `
+      <div class="focus-item">
+        <span class="focus-note">${n.note}</span>
+        <div class="focus-bar-wrap">
+          <div class="focus-bar" style="width:${n.pct}%;background:var(--green)"></div>
+        </div>
+        <span class="focus-pct" style="color:var(--green)">${n.pct}%</span>
+        <span class="focus-tries">${n.attempts} essai${n.attempts>1?'s':''}</span>
+      </div>
+    `).join('');
+  }
+
+  // All notes grid
+  const gridEl = document.getElementById('note-grid');
+  gridEl.innerHTML = data.all_stats.map(n => {
+    const barW = Math.round(n.pct);
+    const barColor = n.status === 'mastered' ? 'var(--green)'
+                   : n.status === 'weak'     ? 'var(--red)'
+                   : n.status === 'learning' ? 'var(--yellow)'
+                   : 'var(--muted)';
+    const pctLabel = n.attempts === 0 ? '—' : n.pct + '%';
+    return `
+      <div class="note-chip ${n.status}" title="${n.note}: ${pctLabel} (${n.attempts} essais)">
+        <span class="note-label">${n.note}</span>
+        <span class="note-pct">${pctLabel}</span>
+        <span class="note-tries">${n.attempts} essai${n.attempts!==1?'s':''}</span>
+        <div class="bar-wrap">
+          <div class="bar-fill" style="width:${barW}%;background:${barColor}"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function resetBandit() {
+  if(!confirm('Réinitialiser tout l\'historique d\'apprentissage ? Cette action est irréversible.')) return;
+  await fetch(URL_RESET_BANDIT, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': CSRF },
+  });
+  loadStats();
+}
+
+// Load on page open
+loadStats();
+// Refresh every 30s if the user keeps the tab open
+setInterval(loadStats, 30000);
+</script>
+{% endblock %}
