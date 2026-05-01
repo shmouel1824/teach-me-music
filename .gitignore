@@ -16,7 +16,7 @@ db.sqlite3
 staticfiles/
 media/
 
-
+recognition/ml_models/*.ipynb
 
 # OS
 .DS_Store
@@ -26,3 +26,4 @@ Thumbs.db
 .vscode/
 .env
 "@ | Out-File -FilePath .gitignore -Encoding utf8
+
