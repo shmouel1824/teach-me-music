@@ -147,7 +147,7 @@ if DATABASE_URL:
 else:
     DATABASES = {
         'default': dj_database_url.parse(
-        'postgresql://postgres:cKBkeDvIZkqUARUfZAonTNZCJLHEeXcr@postgres.railway.internal:5432/railway',
+        os.environ.get('DATABASE_URL', 'postgresql://postgres:cKBkeDvIZkqUARUfZAonTNZCJLHEeXcr@switchyard.proxy.rlwy.net:14205/railway'),
         conn_max_age=600,
     )
     }
