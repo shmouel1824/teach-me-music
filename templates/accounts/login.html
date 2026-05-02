@@ -96,6 +96,12 @@ h2 { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; 
   </div>
 
   <div class="register-link">No account yet? <a href="{% url 'accounts:register' %}">Register</a></div>
+
+  <div class="register-link" style="margin-top:0.6rem;opacity:0.55;font-size:0.78rem;">
+    <a href="/admin/login/" style="color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">
+      ⚙️ Admin login
+    </a>
+  </div>
 </div>
 
 <script>
