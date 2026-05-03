@@ -4,10 +4,11 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
-
+from django.views.decorators.csrf import csrf_exempt
 from .models import UserProfile
 
 
+@csrf_exempt
 @require_http_methods(["GET", "POST"])
 def register_view(request):
     if request.user.is_authenticated:
@@ -35,7 +36,7 @@ def register_view(request):
         return _ok({"redirect": "/play/"})
     return render(request, "accounts/register.html")
 
-
+@csrf_exempt
 @require_http_methods(["GET", "POST"])
 def login_view(request):
     if request.user.is_authenticated:
