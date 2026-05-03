@@ -23,7 +23,7 @@ ALLOWED_HOSTS = os.environ.get(
 
 # ── Apps ──────────────────────────────────────────────────────
 INSTALLED_APPS = [
-    'jazzmin',   # MUST be before django.contrib.admin
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -133,24 +133,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'teach_me_music.wsgi.application'
 
 # ── Database ──────────────────────────────────────────────────
-# Railway sets DATABASE_URL automatically when PostgreSQL is added
-# Locally falls back to SQLite
-DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-else:
-    DATABASES = {
-        'default': dj_database_url.parse(
-        os.environ.get('DATABASE_URL', 'postgresql://postgres:cKBkeDvIZkqUARUfZAonTNZCJLHEeXcr@switchyard.proxy.rlwy.net:14205/railway'),
+# Railway injects DATABASE_URL automatically when PostgreSQL is added.
+# Locally falls back to SQLite.
+DATABASES = {
+    'default': dj_database_url.parse(
+        os.environ.get(
+            'DATABASE_URL',
+            'sqlite:///db.sqlite3'
+        ),
         conn_max_age=600,
     )
-    }
+}
 
 AUTH_PASSWORD_VALIDATORS = []
 
@@ -186,7 +179,7 @@ LEVEL_NOTE_RANGES      = {1:('DO3','DO6'), 2:('DO3','DO6'), 3:('DO3','DO6'), 4:(
 LEVEL_UP_THRESHOLD     = 0.80
 LEVEL_UP_MIN_EXERCISES = 10
 
-# ── CSRF — critical for Railway ───────────────────────────────
+# ── CSRF ──────────────────────────────────────────────────────
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     'CSRF_TRUSTED_ORIGINS',
     'http://localhost:8000'
