@@ -2,14 +2,17 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import TemplateView
 from django.middleware.csrf import get_token
-from django.http import HttpResponse
 from django.shortcuts import render
 
 def loading_view(request):
-    get_token(request)  # forces CSRF cookie to be set
+    get_token(request)
     return render(request, 'loading.html')
+
+def login_view_csrf(request):
+    get_token(request)
+    from accounts.views import login_view
+    return login_view(request)
 
 urlpatterns = [
     path('admin/',      admin.site.urls),
